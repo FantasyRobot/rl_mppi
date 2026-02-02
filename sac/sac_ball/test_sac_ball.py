@@ -4,7 +4,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
-from env_utils import BallEnvironment
+from env.envball_utils import BallEnvironment
 
 # Import SAC components from sac_utils
 import sys
@@ -245,7 +245,7 @@ def run_baseline_controller(env):
             
             # Angle error between current and desired direction
             angle_error = np.arctan2(desired_dir[1], desired_dir[0]) - state[4]
-            # Wrap angle error to [-Ãâ‚¬, Ãâ‚¬]
+            # Wrap angle error to [-ÃƒÂÃ¢â€šÂ¬, ÃƒÂÃ¢â€šÂ¬]
             angle_error = ((angle_error + np.pi) % (2 * np.pi)) - np.pi
             
             # PD controller for linear velocity (proportional to distance)

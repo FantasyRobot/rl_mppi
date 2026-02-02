@@ -2,7 +2,7 @@
 
 import os
 import numpy as np
-from env_utils import BallEnvironment
+from env.envball_utils import BallEnvironment
 
 def generate_training_data(env, num_steps, output_dir="train_data"):
     """

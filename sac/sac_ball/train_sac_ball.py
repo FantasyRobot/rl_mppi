@@ -4,7 +4,7 @@ import os
 import numpy as np
 import torch
 import argparse
-from env_utils import BallEnvironment
+from env.envball_utils import BallEnvironment
 
 # Import SAC components from sac_utils
 import sys
