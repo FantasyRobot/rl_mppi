@@ -117,6 +117,7 @@ class RLMppiController:
         num_samples: int = 100,
         lambda_coeff: float = 0.5,
         noise_std: float = 0.5,
+        vectorized_rollouts: bool = True,
         dt: float | None = None,
         action_min: float = -1.0,
         action_max: float = 1.0,
@@ -129,6 +130,7 @@ class RLMppiController:
         self.num_samples = int(num_samples)
         self.lambda_coeff = float(lambda_coeff)
         self.noise_std = float(noise_std)
+        self.vectorized_rollouts = bool(vectorized_rollouts)
         self.dt = float(env.dt if dt is None else dt)
         self.action_min = float(action_min)
         self.action_max = float(action_max)
@@ -181,6 +183,83 @@ class RLMppiController:
             state = self._step_dynamics(state, action)
         return float(total_cost)
 
+    def simulate_trajectories_batch(
+        self,
+        initial_state: np.ndarray,
+        action_sequences: np.ndarray,
+        target_pos: np.ndarray,
+    ) -> np.ndarray:
+        """Vectorized rollout cost for many action sequences.
+
+        Args:
+            initial_state: shape (4,)
+            action_sequences: shape (N, H, action_dim) in [-1,1]
+            target_pos: shape (2,)
+
+        Returns:
+            costs: shape (N,)
+        """
+        action_sequences = np.asarray(action_sequences, dtype=np.float32)
+        if action_sequences.ndim != 3:
+            raise ValueError(f"action_sequences must be 3D (N,H,dim), got shape={action_sequences.shape}")
+        n, h, ad = action_sequences.shape
+        if h != self.horizon or ad != self.action_dim:
+            raise ValueError(
+                f"action_sequences shape mismatch: expected (N,{self.horizon},{self.action_dim}), got {action_sequences.shape}"
+            )
+
+        s0 = np.asarray(initial_state, dtype=np.float32).reshape(-1)
+        if s0.shape[0] < 4:
+            raise ValueError(f"initial_state must have 4 elements, got shape={s0.shape}")
+
+        target_pos = np.asarray(target_pos, dtype=np.float32).reshape(2)
+        target_x = float(target_pos[0])
+        target_y = float(target_pos[1])
+
+        # State for all samples.
+        x = np.full((n,), float(s0[0]), dtype=np.float32)
+        y = np.full((n,), float(s0[1]), dtype=np.float32)
+        vx = np.full((n,), float(s0[2]), dtype=np.float32)
+        vy = np.full((n,), float(s0[3]), dtype=np.float32)
+
+        dt = np.float32(self.dt)
+        dt2 = np.float32(self.dt * self.dt)
+
+        acc_bound = np.float32(self.env.acceleration_bound)
+        pos_bound = np.float32(self.env.pos_bound)
+        vel_bound = np.float32(self.env.vel_bound)
+
+        pos_cost_coeff = np.float32(self.pos_cost_coeff)
+        act_cost_coeff = np.float32(self.action_cost_coeff)
+
+        costs = np.zeros((n,), dtype=np.float32)
+
+        for t in range(self.horizon):
+            a = action_sequences[:, t, :]
+
+            # Cost uses current state and raw action ([-1,1]).
+            dx = x - target_x
+            dy = y - target_y
+            pos_norm = np.sqrt(dx * dx + dy * dy)
+            act_norm = np.sqrt(a[:, 0] * a[:, 0] + a[:, 1] * a[:, 1])
+            costs += (pos_norm * pos_cost_coeff + act_norm * act_cost_coeff) * dt
+
+            # Dynamics update uses scaled acceleration.
+            ax = np.clip(a[:, 0] * acc_bound, -acc_bound, acc_bound)
+            ay = np.clip(a[:, 1] * acc_bound, -acc_bound, acc_bound)
+
+            new_vx = vx + ax * dt
+            new_vy = vy + ay * dt
+            new_x = x + new_vx * dt + np.float32(0.5) * ax * dt2
+            new_y = y + new_vy * dt + np.float32(0.5) * ay * dt2
+
+            x = np.clip(new_x, -pos_bound, pos_bound)
+            y = np.clip(new_y, -pos_bound, pos_bound)
+            vx = np.clip(new_vx, -vel_bound, vel_bound)
+            vy = np.clip(new_vy, -vel_bound, vel_bound)
+
+        return costs
+
     def _rollout_policy_nominal(self, current_state: np.ndarray, target_pos: np.ndarray) -> np.ndarray:
         """Roll the RL policy forward through predicted dynamics to build u_nom."""
         s = np.asarray(current_state, dtype=np.float32).copy()
@@ -205,9 +284,12 @@ class RLMppiController:
         action_sequences = u_nom[None, :, :] + noise
         action_sequences = np.clip(action_sequences, self.action_min, self.action_max)
 
-        costs = np.zeros(self.num_samples, dtype=np.float32)
-        for i in range(self.num_samples):
-            costs[i] = self.simulate_trajectory(current_state, action_sequences[i], target_pos)
+        if self.vectorized_rollouts:
+            costs = self.simulate_trajectories_batch(current_state, action_sequences, target_pos)
+        else:
+            costs = np.zeros(self.num_samples, dtype=np.float32)
+            for i in range(self.num_samples):
+                costs[i] = self.simulate_trajectory(current_state, action_sequences[i], target_pos)
 
         cost_min = float(np.min(costs))
         # MPPI pdf weighting: w_i ∝ exp(-(S_i - S_min)/λ)
