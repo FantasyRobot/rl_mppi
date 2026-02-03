@@ -4,12 +4,15 @@ import os
 import numpy as np
 import torch
 import argparse
+import sys
+# 自动添加项目根目录到sys.path，确保可以import env.envball_utils
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from env.envball_utils import BallEnvironment
 
 # Import SAC components from sac_utils
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from sac_utils import SACAgent, ReplayBuffer
+from sac_utils import SACAgent, ReplayBuffer, fit_minmax_scalers, minmax_scale_to_minus1_1
 
 def train_sac_ball(data_dir, epochs, batch_size, save_path, target_pos=None):
     """
@@ -41,16 +44,26 @@ def train_sac_ball(data_dir, epochs, batch_size, save_path, target_pos=None):
     state_dim = env.state_dim
     action_dim = env.action_dim
     
-    # Create replay buffer and populate with data
-    print("Populating replay buffer...")
-    replay_buffer = ReplayBuffer(max_size=len(states))
-    
-    for i in range(len(states)):
+    # Fit min-max scalers on states/actions and scale states for training
+    print("Fitting scalers and scaling states...")
+    scalers = fit_minmax_scalers(states, actions, next_states)
+    states_scaled = minmax_scale_to_minus1_1(states, scalers['x_min'], scalers['x_max'])
+    next_states_scaled = minmax_scale_to_minus1_1(next_states, scalers['x_min'], scalers['x_max'])
+
+    # Save scalers alongside the model path for later use during testing
+    scaler_save_path = save_path + ".scalers.npz"
+    np.savez(scaler_save_path, x_min=scalers['x_min'], x_max=scalers['x_max'], u_min=scalers['u_min'], u_max=scalers['u_max'])
+    print(f"Scalers saved to {scaler_save_path}")
+
+    # Create replay buffer and populate with scaled data
+    print("Populating replay buffer with scaled states...")
+    replay_buffer = ReplayBuffer(max_size=len(states_scaled))
+    for i in range(len(states_scaled)):
         replay_buffer.add(
-            state=states[i],
+            state=states_scaled[i],
             action=actions[i],
             reward=rewards[i],
-            next_state=next_states[i],
+            next_state=next_states_scaled[i],
             done=dones[i]
         )
     
@@ -63,10 +76,10 @@ def train_sac_ball(data_dir, epochs, batch_size, save_path, target_pos=None):
         action_dim=action_dim,
         hidden_dim=256,
         learning_rate=3e-4,
-        alpha=0.2,
+        alpha=0.1,  # 手动设置alpha，关闭自动熵调节
         gamma=0.99,
         tau=0.005,
-        auto_entropy_tuning=True
+        auto_entropy_tuning=False
     )
     
     # Training loop

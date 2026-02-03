@@ -56,22 +56,20 @@ class PolicyNetwork(nn.Module):
 
         normal = distributions.Normal(mean, std)
         z = normal.rsample()
-        
-        # EXTREME scaling to force actions away from limits
-        # This is an aggressive approach to prevent limit-seeking behavior
-        action = torch.tanh(z * 0.3) * 0.5
+        # Standard tanh squashing to map to [-1, 1]
+        action = torch.tanh(z)
 
         log_prob_raw = normal.log_prob(z).sum(dim=-1, keepdim=True)
-        log_det_jacobian = torch.sum(torch.log(1 - (action / 0.5).pow(2) + EPS), dim=-1, keepdim=True)
+        # Jacobian correction for tanh: log(1 - tanh(z)^2)
+        log_det_jacobian = torch.sum(torch.log(1 - action.pow(2) + EPS), dim=-1, keepdim=True)
         log_prob = log_prob_raw - log_det_jacobian
 
         return action, log_prob, mean, log_std
 
     def get_deterministic(self, x):
         mean, _ = self.forward(x)
-        # Apply the same extreme scaling as in sample method
-        # to ensure consistent behavior between evaluation and training
-        return torch.tanh(mean * 0.3) * 0.5
+        # Deterministic action: tanh(mean) maps to [-1,1]
+        return torch.tanh(mean)
 
 # --------------------------# Q-Network (Critic) - Q_θ# --------------------------
 class QNetwork(nn.Module):

@@ -110,18 +110,18 @@ def inference(x,q,net):
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     train_cdf = Train_CDF(device)
-    # train_cdf.train(input_dim=4, 
-    #           hidden_dim=[256, 256, 128, 128, 128], 
-    #           output_dim=1, 
-    #           activate=torch.nn.ReLU, 
-    #           batch_size=100,
-    #           learning_rate=0.01, 
-    #           weight_decay=1e-5, 
-    #           save_path='./2Dexamples', 
-    #           device=device,
-    #       epochs=1000)
+    train_cdf.train(input_dim=4, 
+            hidden_dim=[256, 256, 128, 128, 128], 
+            output_dim=1, 
+            activate=torch.nn.ReLU, 
+            batch_size=100,
+            learning_rate=0.01, 
+            weight_decay=1e-5, 
+            save_path='./', 
+            device=device,
+        epochs=1000)
     
-    net = torch.load(os.path.join('./2Dexamples', 'model.pth'))
+    net = torch.load(os.path.join('./', 'model.pth'))
     net.eval()
     x = torch.tensor([[2.0,2.0]],device=device)
     q = train_cdf.cdf.create_grid_torch(train_cdf.cdf.nbData).to(device)
