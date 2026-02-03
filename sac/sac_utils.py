@@ -132,7 +132,8 @@ class SACAgent:
                  alpha=0.2,
                  gamma=0.99,
                  tau=0.005,
-                 auto_entropy_tuning=True):
+                 auto_entropy_tuning=True,
+                 use_lr_scheduler: bool = False):
         
         # Initialize networks
         self.policy_net = PolicyNetwork(state_dim, action_dim, hidden_dims=[hidden_dim, hidden_dim]).to(DEVICE)
@@ -152,10 +153,18 @@ class SACAgent:
         self.q1_optimizer = optim.Adam(self.q_net1.parameters(), lr=learning_rate, weight_decay=1e-5)
         self.q2_optimizer = optim.Adam(self.q_net2.parameters(), lr=learning_rate, weight_decay=1e-5)
         
-        # Learning rate scheduler for decay
-        self.policy_lr_scheduler = optim.lr_scheduler.StepLR(self.policy_optimizer, step_size=100, gamma=0.9)
-        self.q1_lr_scheduler = optim.lr_scheduler.StepLR(self.q1_optimizer, step_size=100, gamma=0.9)
-        self.q2_lr_scheduler = optim.lr_scheduler.StepLR(self.q2_optimizer, step_size=100, gamma=0.9)
+        # Learning rate scheduler for decay (off by default).
+        # In online RL we can perform tens/hundreds of thousands of updates; stepping
+        # a scheduler every update can shrink LR to ~0 and stall learning.
+        self.use_lr_scheduler = bool(use_lr_scheduler)
+        if self.use_lr_scheduler:
+            self.policy_lr_scheduler = optim.lr_scheduler.StepLR(self.policy_optimizer, step_size=100, gamma=0.9)
+            self.q1_lr_scheduler = optim.lr_scheduler.StepLR(self.q1_optimizer, step_size=100, gamma=0.9)
+            self.q2_lr_scheduler = optim.lr_scheduler.StepLR(self.q2_optimizer, step_size=100, gamma=0.9)
+        else:
+            self.policy_lr_scheduler = None
+            self.q1_lr_scheduler = None
+            self.q2_lr_scheduler = None
         
         # Hyperparameters
         self.gamma = gamma
@@ -221,9 +230,11 @@ class SACAgent:
         torch.nn.utils.clip_grad_norm_(self.q_net2.parameters(), max_norm=1.0)
         self.q2_optimizer.step()
         
-        # Step learning rate schedulers
-        self.q1_lr_scheduler.step()
-        self.q2_lr_scheduler.step()
+        # Step learning rate schedulers (if enabled)
+        if self.q1_lr_scheduler is not None:
+            self.q1_lr_scheduler.step()
+        if self.q2_lr_scheduler is not None:
+            self.q2_lr_scheduler.step()
         
         # -----------------------------
         # Update Policy Network
@@ -248,8 +259,9 @@ class SACAgent:
         torch.nn.utils.clip_grad_norm_(self.policy_net.parameters(), max_norm=1.0)
         self.policy_optimizer.step()
         
-        # Step policy learning rate scheduler
-        self.policy_lr_scheduler.step()
+        # Step policy learning rate scheduler (if enabled)
+        if self.policy_lr_scheduler is not None:
+            self.policy_lr_scheduler.step()
         
         # Unfreeze Q-networks
         for param in self.q_net1.parameters():

@@ -14,7 +14,14 @@ class BallEnvironment:
     Action space: [ax, ay]  (desired acceleration components)
     """
 
-    def __init__(self, target_pos=None, max_steps=100):
+    def __init__(
+        self,
+        target_pos=None,
+        max_steps=100,
+        reward_scale: float = 1.0,
+        reset_span: float = 5.0,
+        reach_threshold: float = 0.5,
+    ):
         # Environment parameters
         self.max_steps = max_steps
         self.dt = 0.01  # Time step
@@ -23,6 +30,15 @@ class BallEnvironment:
         self.pos_bound = 10.0  # Position bounds [-10, 10]
         self.vel_bound = 2.0   # Linear velocity bounds
         self.acceleration_bound = 1.0  # Acceleration bounds
+
+        # Reward scale (multiplies the distance-delta reward; does not change sign)
+        self.reward_scale = float(reward_scale)
+
+        # Reset sampling span around target (symmetric)
+        self.reset_span = float(reset_span)
+
+        # Episode termination distance threshold
+        self.reach_threshold = float(reach_threshold)
 
         # Target position
         if target_pos is None:
@@ -33,15 +49,19 @@ class BallEnvironment:
         # Initialize state via reset
         self.reset()
 
-    def reset(self, initial_state=None):
+    def reset(self, initial_state=None, *, reset_span: float | None = None):
         """Reset the environment to initial state."""
         self.current_step = 0
 
         if initial_state is None:
-            # Random initial position in [-5, 5], zero velocity
+            # Random initial position sampled *around the target* (symmetric), zero velocity
+            # This avoids a biased dataset where most states are on one side of the target.
             self.state = np.zeros(4)
-            self.state[0] = np.random.uniform(-5.0, 5.0)
-            self.state[1] = np.random.uniform(-5.0, 5.0)
+            span = float(self.reset_span if reset_span is None else reset_span)
+            self.state[0] = np.random.uniform(self.target_pos[0] - span, self.target_pos[0] + span)
+            self.state[1] = np.random.uniform(self.target_pos[1] - span, self.target_pos[1] + span)
+            self.state[0] = np.clip(self.state[0], -self.pos_bound, self.pos_bound)
+            self.state[1] = np.clip(self.state[1], -self.pos_bound, self.pos_bound)
             self.state[2] = 0.0
             self.state[3] = 0.0
         else:
@@ -106,63 +126,47 @@ class BallEnvironment:
         self.state = np.array([new_x, new_y, new_vx, new_vy])
         self.current_step += 1
 
-        # Calculate reward
+        # Calculate reward (only encourages moving toward target)
         reward = self._calculate_reward()
 
-        # Boundary penalty and early termination if hit
+        # Do NOT terminate on boundary hit.
+        # Terminating on boundary creates an incentive to "crash" to end the episode early
+        # (especially when not sure how to reach the goal), which looks like boundary attraction.
         done = False
-        if hit_boundary:
-            # 大惩罚并提前结束，教会 agent 避免边界
-            reward += -80.0
-            done = True
 
         # Check done: reached target or exceeded max steps
         distance = np.linalg.norm(self.state[:2] - self.target_pos)
-        reach_threshold = 0.3  # 更严格的终点判定
-        if distance < reach_threshold:
+        time_limit = False
+        if distance < self.reach_threshold:
             done = True
         elif self.current_step >= self.max_steps:
             done = True
+            time_limit = True
 
         info = {
             "distance": distance,
             "applied_acceleration": np.linalg.norm([ax, ay]),
             "step": self.current_step,
             "hit_boundary": hit_boundary,
+            "time_limit": time_limit,
         }
 
         return self.state, reward, done, info
 
     def _calculate_reward(self):
-        """更强激励：距离缩短奖励更大，终点奖励更大，终点判定更严格。"""
+        """Reward only for moving toward the target.
+
+        Returns positive when distance to target decreases, negative when it increases.
+        No reach bonus, no speed/action penalties, no boundary penalties.
+        """
         current_pos = self.state[:2]
-        velocity = self.state[2:4]
-        action = getattr(self, "last_action", np.zeros(2))
-        distance_to_env_target = np.linalg.norm(current_pos - self.target_pos)
+        distance = np.linalg.norm(current_pos - self.target_pos)
 
-        # 距离缩短奖励（加大权重）
-        if hasattr(self, "prev_distance"):
-            distance_delta = self.prev_distance - distance_to_env_target
-            distance_reward = 30.0 * distance_delta  # 加大权重
-        else:
-            distance_reward = 0.0
-        self.prev_distance = distance_to_env_target
-
-        # 终点奖励（更大）
-        reach_threshold = 0.3
-        reach_reward = 200.0 if distance_to_env_target < reach_threshold else 0.0
-
-        # 速度惩罚
-        speed_penalty = -0.02 * np.linalg.norm(velocity)
-        # 动作惩罚
-        action_penalty = -0.01 * np.linalg.norm(action)
-        # 距离惩罚
-        far_penalty = -0.01 * distance_to_env_target
-
-        total_reward = (
-            distance_reward + reach_reward + speed_penalty + action_penalty + far_penalty
-        )
-        return total_reward
+        # Distance delta reward: + if getting closer
+        prev = getattr(self, "prev_distance", distance)
+        reward = (prev - distance) * self.reward_scale
+        self.prev_distance = distance
+        return float(reward)
 
     def render(self):
         """Render the environment."""

@@ -105,8 +105,8 @@ python cdf_demo.py
 ### 4. 运行SAC强化学习
 ```bash
 cd sac/sac_ball
-python train_sac_ball.py  # 训练模型
-python test_sac_ball.py   # 测试模型
+python sac_ball_cli.py train  # 在线交互训练
+python sac_ball_cli.py test_near     # 从目标点附近初始化的快速测试
 ```
 
 ## 算法原理
