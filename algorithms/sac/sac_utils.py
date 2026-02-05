@@ -180,6 +180,11 @@ class SACAgent:
         next_state_batch = torch.FloatTensor(batch["next_state"]).to(DEVICE)
         done_batch = torch.FloatTensor(batch["done"]).to(DEVICE)
 
+        discount_arr = batch.get("discount", None)
+        discount_batch = None
+        if discount_arr is not None:
+            discount_batch = torch.FloatTensor(discount_arr).to(DEVICE)
+
         with torch.no_grad():
             next_action_batch, log_prob_next_action_batch, _, _ = self.policy_net.sample(next_state_batch)
 
@@ -187,7 +192,10 @@ class SACAgent:
             target_q2 = self.target_q_net2(next_state_batch, next_action_batch)
             target_q_min = torch.min(target_q1, target_q2) - self.alpha * log_prob_next_action_batch.squeeze()
 
-            target_q = reward_batch + (1 - done_batch) * self.gamma * target_q_min
+            if discount_batch is not None:
+                target_q = reward_batch + discount_batch * target_q_min
+            else:
+                target_q = reward_batch + (1 - done_batch) * self.gamma * target_q_min
 
         current_q1 = self.q_net1(state_batch, action_batch)
         current_q2 = self.q_net2(state_batch, action_batch)
@@ -267,10 +275,10 @@ class ReplayBuffer:
         self.max_size = max_size
         self.buffer = []
 
-    def add(self, state, action, reward, next_state, done):
+    def add(self, state, action, reward, next_state, done, discount=None):
         if len(self.buffer) >= self.max_size:
             self.buffer.pop(0)
-        self.buffer.append((state, action, reward, next_state, done))
+        self.buffer.append((state, action, reward, next_state, done, discount))
 
     def sample(self, batch_size):
         indices = np.random.randint(0, len(self.buffer), size=batch_size)
@@ -280,22 +288,34 @@ class ReplayBuffer:
         rewards = []
         next_states = []
         dones = []
+        discounts = []
 
         for idx in indices:
-            state, action, reward, next_state, done = self.buffer[idx]
+            item = self.buffer[idx]
+            if len(item) == 5:
+                state, action, reward, next_state, done = item
+                discount = None
+            else:
+                state, action, reward, next_state, done, discount = item
             states.append(state)
             actions.append(action)
             rewards.append(reward)
             next_states.append(next_state)
             dones.append(done)
+            discounts.append(discount)
 
-        return {
+        out = {
             "state": np.array(states),
             "action": np.array(actions),
             "reward": np.array(rewards),
             "next_state": np.array(next_states),
             "done": np.array(dones),
         }
+
+        if any(d is not None for d in discounts):
+            out["discount"] = np.array([0.0 if d is None else float(d) for d in discounts], dtype=np.float32)
+
+        return out
 
     def __len__(self):
         return len(self.buffer)

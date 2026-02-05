@@ -7,8 +7,12 @@ import os
 import sys
 import time
 
-import matplotlib.pyplot as plt
 import numpy as np
+
+try:
+    import matplotlib.pyplot as plt
+except ModuleNotFoundError:  # pragma: no cover
+    plt = None
 
 # Ensure repo root is importable regardless of CWD.
 _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -27,6 +31,13 @@ def _resolve_plot_path(plot_path: str) -> str:
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
     return plot_path
+
+
+def _derive_signals_plot_path(plot_path: str) -> str:
+    root, ext = os.path.splitext(str(plot_path))
+    if ext.strip() == "":
+        ext = ".png"
+    return f"{root}_signals{ext}"
 
 from env.envball_obstacles import BallEnvironmentObstacles, CircleObstacle
 from algorithms.mppi.mppi_ball import MPPI
@@ -64,6 +75,10 @@ def run_episode(env: BallEnvironmentObstacles, controller, target_pos: np.ndarra
     state = env.reset(initial_state=np.asarray(initial_state, dtype=np.float32))
 
     traj_xy = [np.asarray(state[:2], dtype=np.float32).copy()]
+    ts_vx = [float(state[2])]
+    ts_vy = [float(state[3])]
+    ts_ax: list[float] = []
+    ts_ay: list[float] = []
     hit_obstacle_any = False
     min_clearance = float("inf")
 
@@ -78,10 +93,16 @@ def run_episode(env: BallEnvironmentObstacles, controller, target_pos: np.ndarra
         action = controller.get_action(state, target_pos)
         action = np.clip(np.asarray(action, dtype=np.float32), -1.0, 1.0)
 
+        # Convert normalized action to physical acceleration components.
+        ts_ax.append(float(action[0]) * float(env.acceleration_bound))
+        ts_ay.append(float(action[1]) * float(env.acceleration_bound))
+
         next_state, reward, done, info = env.step(action)
         total_reward += float(reward)
         steps_taken += 1
         traj_xy.append(np.asarray(next_state[:2], dtype=np.float32).copy())
+        ts_vx.append(float(next_state[2]))
+        ts_vy.append(float(next_state[3]))
 
         clr = float(info.get("min_obstacle_clearance", float("inf")))
         min_clearance = min(min_clearance, clr)
@@ -113,11 +134,22 @@ def run_episode(env: BallEnvironmentObstacles, controller, target_pos: np.ndarra
         "min_clearance": float(min_clearance),
         "path_length": float(path_len),
         "episode_time_s": float(dt),
+        "vel_bound": float(env.vel_bound),
+        "acc_bound": float(env.acceleration_bound),
         "traj_xy": traj_xy,
+        "signals": {
+            "vx": np.asarray(ts_vx, dtype=np.float32),
+            "vy": np.asarray(ts_vy, dtype=np.float32),
+            "ax": np.asarray(ts_ax, dtype=np.float32),
+            "ay": np.asarray(ts_ay, dtype=np.float32),
+        },
     }
 
 
 def plot_runs(*, runs: dict[str, list[dict]], obstacles: list[CircleObstacle], target_pos: np.ndarray, plot_path: str, show_plot: bool) -> None:
+    if plt is None:
+        print("[WARN] matplotlib is not installed; skipping plots. Install with: pip install matplotlib")
+        return
     plot_path = _resolve_plot_path(plot_path)
     plt.figure(figsize=(10, 10))
 
@@ -130,8 +162,8 @@ def plot_runs(*, runs: dict[str, list[dict]], obstacles: list[CircleObstacle], t
         circ2 = plt.Circle((obs.x, obs.y), obs.r + influence, color="gray", alpha=0.15, fill=False, linestyle="--")
         ax.add_patch(circ2)
 
-    colors = {"MPPI": "tab:blue", "SAC": "tab:green", "RL-MPPI": "tab:orange"}
-    styles = {"MPPI": "-", "SAC": ":", "RL-MPPI": "--"}
+    colors = {"MPPI": "tab:blue", "SAC": "tab:green", "RL-MPPI": "tab:orange", "cd_rl_mppi": "tab:red"}
+    styles = {"MPPI": "-", "SAC": ":", "RL-MPPI": "--", "cd_rl_mppi": "-."}
 
     def _pick_representative_episode(eps: list[dict]) -> dict | None:
         if not eps:
@@ -187,7 +219,7 @@ def plot_runs(*, runs: dict[str, list[dict]], obstacles: list[CircleObstacle], t
     plt.ylim(-10, 10)
     plt.grid(True)
     plt.gca().set_aspect("equal", adjustable="box")
-    plt.title("Obstacle avoidance: MPPI vs SAC vs RL-MPPI")
+    plt.title("Obstacle avoidance: MPPI vs SAC vs RL-MPPI vs cd_rl_mppi")
     plt.xlabel("X")
     plt.ylabel("Y")
     plt.legend(loc="upper right")
@@ -197,6 +229,78 @@ def plot_runs(*, runs: dict[str, list[dict]], obstacles: list[CircleObstacle], t
     if show_plot:
         plt.show()
     plt.close()
+
+    # Signals comparison plot: representative episode per algorithm.
+    rep_eps: dict[str, dict] = {}
+    for name, eps in runs.items():
+        rep = _pick_representative_episode(eps)
+        if rep is not None:
+            rep_eps[name] = rep
+
+    if rep_eps:
+        signals_plot_path = _derive_signals_plot_path(plot_path)
+        fig_s = plt.figure(figsize=(14, 8))
+        ax_vx = fig_s.add_subplot(2, 2, 1)
+        ax_vy = fig_s.add_subplot(2, 2, 2)
+        ax_ax = fig_s.add_subplot(2, 2, 3)
+        ax_ay = fig_s.add_subplot(2, 2, 4)
+
+        # Bounds: taken from the first representative episode.
+        first_ep = next(iter(rep_eps.values()))
+        vb = float(first_ep.get("vel_bound", 2.0))
+        ab = float(first_ep.get("acc_bound", 1.0))
+        if "signals" in first_ep:
+            # If the episode stored env bounds, prefer those.
+            vb = float(first_ep.get("vel_bound", vb))
+            ab = float(first_ep.get("acc_bound", ab))
+
+        # Always draw bound lines (they help interpret controller aggressiveness).
+        for ax in (ax_vx, ax_vy):
+            ax.axhline(+vb, color="black", alpha=0.25, linestyle=":", linewidth=1.4)
+            ax.axhline(-vb, color="black", alpha=0.25, linestyle=":", linewidth=1.4)
+        for ax in (ax_ax, ax_ay):
+            ax.axhline(+ab, color="black", alpha=0.25, linestyle=":", linewidth=1.4)
+            ax.axhline(-ab, color="black", alpha=0.25, linestyle=":", linewidth=1.4)
+
+        for name, ep in rep_eps.items():
+            sig = dict(ep.get("signals", {}))
+            vx = np.asarray(sig.get("vx", []), dtype=np.float32)
+            vy = np.asarray(sig.get("vy", []), dtype=np.float32)
+            ax_ = np.asarray(sig.get("ax", []), dtype=np.float32)
+            ay_ = np.asarray(sig.get("ay", []), dtype=np.float32)
+
+            c = colors.get(name, None)
+            ls = styles.get(name, "-")
+            if vx.size:
+                ax_vx.plot(np.arange(vx.shape[0]), vx, label=name, color=c, linestyle=ls, linewidth=1.8)
+            if vy.size:
+                ax_vy.plot(np.arange(vy.shape[0]), vy, label=name, color=c, linestyle=ls, linewidth=1.8)
+            if ax_.size:
+                ax_ax.plot(np.arange(ax_.shape[0]), ax_, label=name, color=c, linestyle=ls, linewidth=1.8)
+            if ay_.size:
+                ax_ay.plot(np.arange(ay_.shape[0]), ay_, label=name, color=c, linestyle=ls, linewidth=1.8)
+
+        ax_vx.set_title(r"$v_x$ (representative episode)")
+        ax_vy.set_title(r"$v_y$ (representative episode)")
+        ax_ax.set_title(r"$a_x$ (representative episode)")
+        ax_ay.set_title(r"$a_y$ (representative episode)")
+
+        for ax in (ax_vx, ax_vy, ax_ax, ax_ay):
+            ax.set_xlabel("Step")
+            ax.set_ylabel("Value")
+            ax.grid(True, alpha=0.25)
+
+        # Use a single legend for all subplots.
+        handles, labels = ax_vx.get_legend_handles_labels()
+        if handles:
+            fig_s.legend(handles, labels, loc="upper center", ncol=min(4, len(labels)))
+        fig_s.suptitle("Obstacle avoidance: velocity/acceleration components comparison", y=1.02)
+        fig_s.tight_layout()
+        fig_s.savefig(signals_plot_path)
+        print(f"Signals plot saved to {signals_plot_path}")
+        if show_plot:
+            plt.show()
+        plt.close(fig_s)
 
 
 def summarize(name: str, results: list[dict]) -> None:
@@ -222,6 +326,24 @@ def main() -> None:
         "--model_path",
         type=str,
         default=os.path.join(_ROOT_DIR, "experiments", "sac_ball", "models", "sac_ball_model_online.pth"),
+    )
+    parser.add_argument(
+        "--cd_model_path",
+        type=str,
+        default=os.path.join(_ROOT_DIR, "experiments", "cd_sac_ball", "models", "cd_sac_ball_model_online.pth"),
+        help="cd_sac_ball checkpoint used as RL-MPPI prior (controller name: cd_rl_mppi)",
+    )
+    parser.add_argument(
+        "--vel_bound",
+        type=float,
+        default=None,
+        help="Override environment velocity bound (default: use cd checkpoint if available)",
+    )
+    parser.add_argument(
+        "--acc_bound",
+        type=float,
+        default=None,
+        help="Override environment acceleration bound (default: use cd checkpoint if available)",
     )
     parser.add_argument("--init_x", type=float, default=-6.0)
     parser.add_argument("--init_y", type=float, default=-6.0)
@@ -276,8 +398,28 @@ def main() -> None:
     target_pos = np.asarray([float(args.target_x), float(args.target_y)], dtype=np.float32)
     init_state = np.asarray([float(args.init_x), float(args.init_y), float(args.init_vx), float(args.init_vy)], dtype=np.float32)
 
+    env0 = BallEnvironmentObstacles(
+        target_pos=target_pos.tolist(),
+        max_steps=int(args.max_steps),
+        reward_scale=100.0,
+        obstacles=obstacles,
+        obstacle_margin=float(args.obstacle_margin),
+        obstacle_penalty=float(args.obstacle_penalty),
+        terminate_on_collision=bool(args.terminate_on_collision),
+    )
+
+    # Load policies first so we can infer default bounds from the cd checkpoint.
+    policy = load_sac_policy(str(args.model_path), state_dim=env0.state_dim, action_dim=env0.action_dim)
+    cd_policy = load_sac_policy(str(args.cd_model_path), state_dim=env0.state_dim, action_dim=env0.action_dim)
+
+    # Choose common evaluation bounds (shared environment for fair comparison).
+    # Defaults are taken from the environment, not from a checkpoint, so that
+    # comparisons remain stable unless explicitly overridden via CLI.
+    vel_bound = float(env0.vel_bound if args.vel_bound is None else args.vel_bound)
+    acc_bound = float(env0.acceleration_bound if args.acc_bound is None else args.acc_bound)
+
     def make_env() -> BallEnvironmentObstacles:
-        return BallEnvironmentObstacles(
+        env = BallEnvironmentObstacles(
             target_pos=target_pos.tolist(),
             max_steps=int(args.max_steps),
             reward_scale=100.0,
@@ -286,9 +428,10 @@ def main() -> None:
             obstacle_penalty=float(args.obstacle_penalty),
             terminate_on_collision=bool(args.terminate_on_collision),
         )
-
-    env0 = make_env()
-    policy = load_sac_policy(str(args.model_path), state_dim=env0.state_dim, action_dim=env0.action_dim)
+        # Mutate bounds to match evaluation setup.
+        env.vel_bound = float(vel_bound)
+        env.acceleration_bound = float(acc_bound)
+        return env
 
     def make_mppi(env):
         return MPPI(
@@ -332,6 +475,26 @@ def main() -> None:
             los_cost_coeff=float(args.los_cost_coeff),
         )
 
+    def make_cd_rl_mppi(env):
+        return RLMppiController(
+            env=env,
+            policy=cd_policy,
+            horizon=int(args.horizon),
+            num_samples=int(args.num_samples),
+            lambda_coeff=float(args.lambda_coeff),
+            noise_std=float(args.noise_std),
+            dt=env.dt,
+            vectorized_rollouts=True,
+            obstacles=obstacles_tuples,
+            obstacle_margin=float(args.obstacle_margin),
+            obstacle_cost_coeff=float(args.obstacle_cost_coeff),
+            obstacle_safety_distance=float(args.obstacle_safety_distance),
+            collision_cost=float(args.collision_cost),
+            use_los_obstacle_cost=not bool(args.disable_los_cost),
+            los_influence=float(args.los_influence),
+            los_cost_coeff=float(args.los_cost_coeff),
+        )
+
     initial_states = [init_state.copy() for _ in range(int(args.num_tests))]
 
     def run_many(make_controller):
@@ -356,6 +519,7 @@ def main() -> None:
     mppi_res, mppi_t = run_many(make_mppi)
     sac_res, sac_t = run_many(make_sac)
     rl_res, rl_t = run_many(make_rl_mppi)
+    cd_rl_res, cd_rl_t = run_many(make_cd_rl_mppi)
 
     summarize("MPPI", mppi_res)
     print(f"  total_time_s: {mppi_t:.3f}")
@@ -364,7 +528,16 @@ def main() -> None:
     summarize("RL-MPPI", rl_res)
     print(f"  total_time_s: {rl_t:.3f}")
 
-    runs = {"MPPI": mppi_res, "SAC": sac_res, "RL-MPPI": rl_res}
+    summarize("cd_rl_mppi", cd_rl_res)
+    print(f"  total_time_s: {cd_rl_t:.3f}")
+
+    # Stash the common bounds on each episode so plotting can draw reference lines.
+    for eps in (mppi_res, sac_res, rl_res, cd_rl_res):
+        for ep in eps:
+            ep["vel_bound"] = float(vel_bound)
+            ep["acc_bound"] = float(acc_bound)
+
+    runs = {"MPPI": mppi_res, "SAC": sac_res, "RL-MPPI": rl_res, "cd_rl_mppi": cd_rl_res}
     plot_runs.obstacle_margin = float(args.obstacle_margin)
     plot_runs.plot_all_trajectories = bool(args.plot_all_trajectories)
     plot_runs(runs=runs, obstacles=obstacles, target_pos=target_pos, plot_path=str(args.plot_path), show_plot=bool(args.show_plot))

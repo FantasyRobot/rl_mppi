@@ -1,0 +1,85 @@
+\documentclass{article}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\begin{document}
+
+\title{TD-CD-SAC Online Training Algorithm}
+\author{Algorithm Implementation}
+\date{\today}
+\maketitle
+
+\begin{algorithm}[t]
+\caption{TD-CD-SAC Online Training (cd\_sac\_ball)}
+\label{alg:tdcd-sac}
+\begin{algorithmic}[1]
+\Require Constrained env. $\mathcal{E}$, discount $\gamma$, batch size $B$
+\Require TD-CD params $p^{\max}$, $\tau_c$, switch \texttt{use\_amount}
+\State Initialize SAC (two critics, actor, targets) and replay buffer $\mathcal{D}$
+\State $c_{\max}^{seen}\leftarrow 0,\;c_{\max}^{ema}\leftarrow 1$; sample $s\sim \mathcal{E}.\mathrm{reset}()$
+\For{$t=0,1,\dots,T-1$}
+    \State Sample action $u\sim\pi(\cdot\mid s)$ (or random at start)
+    \State Step env: $(s',r,d,\mathrm{info})\leftarrow\mathcal{E}.\mathrm{step}(u)$
+    \State \Comment{TD-CD: compute per-transition discount $\gamma_t$}
+    \If{$d=1$} \State $\gamma_t\leftarrow 0$ \Else
+        \If{\texttt{use\_amount}=1}
+            \State $c\leftarrow \mathrm{info}.\texttt{vel\_violation\_amount}$; $c_{\max}^{seen}\leftarrow\max(c_{\max}^{seen},|c|)$
+            \State $\delta\leftarrow p^{\max}\,\mathrm{clip}(|c|/c_{\max}^{ema},0,1)$
+        \Else
+            \State $c\leftarrow\mathbb{I}[\mathrm{info}.\texttt{constraint\_violation}=1]$; $\delta\leftarrow p^{\max}c$
+        \EndIf
+        \State $\gamma_t\leftarrow \gamma(1-\delta)$
+    \EndIf
+    \State Store $(s,u,r,s',\gamma_t)$ into $\mathcal{D}$; set $s\leftarrow s'$
+    \If{$|\mathcal{D}|\ge B$}
+        \State Sample $\{(s_i,u_i,r_i,s'_i,\gamma_i)\}_{i=1}^B\sim\mathcal{D}$
+        \State \Comment{Same as SAC, but TD target uses stored $\gamma_i$}
+        \State Update SAC with targets $y_i = r_i + \gamma_i\,V(s'_i)$
+    \EndIf
+    \If{$t\bmod N_{\text{eval}}=0$}
+        \State $c_{\max}^{ema}\leftarrow \tau_c c_{\max}^{ema} + (1-\tau_c)\max(c_{\max}^{seen},\epsilon)$; $c_{\max}^{seen}\leftarrow 0$
+    \EndIf
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\section{Notation}
+\begin{itemize}
+    \item $Q_{\theta_j}$: $j$-th critic network with parameters $\theta_j$
+    \item $\pi_{\phi}$: Actor network with parameters $\phi$
+    \item $\bar\theta_j$: Target network parameters for critic $j$
+    \item $\alpha$: Temperature parameter for entropy regularization
+    \item $\mathcal{D}$: Replay buffer
+    \item $c_t$: Constraint violation at time $t$
+    \item $\delta_t$: Soft termination probability at time $t$
+    \item $\gamma_t$: Discount factor at time $t$
+    \item $c_{\max}^{seen}$: Maximum constraint violation seen so far
+    \item $c_{\max}^{ema}$: Exponential moving average of maximum constraint violation
+\end{itemize}
+
+\section{Standard SAC (brief)}
+Vanilla SAC alternates between collecting transitions and updating networks from replay:
+\begin{enumerate}
+    \item Collect $(s,a,r,s',d)$; store into replay buffer $\mathcal{D}$.
+    \item Sample a minibatch from $\mathcal{D}$.
+    \item Compute $V(s')=\min_j Q_{\bar\theta_j}(s',a')-\alpha\log\pi(a'\mid s')$ with $a'\sim\pi(\cdot\mid s')$.
+    \item Critic target (SAC): $y = r + \gamma(1-d)V(s')$.
+    \item Update critics, update actor, (optional) update $\alpha$, soft-update target critics.
+\end{enumerate}
+
+\section{TD-CD-SAC: what changes vs SAC}
+TD-CD-SAC keeps the SAC update rules unchanged \emph{except} for the discount used in the TD target.
+\begin{itemize}
+    \item \textbf{Extra signal}: extract a constraint signal $c_t$ from environment info (binary violation or continuous amount).
+    \item \textbf{Soft termination}: compute $\delta_t\in[0,1]$ (probability of terminating the backup) using $p^{\max}$ and optional normalization by $c_{\max}^{ema}$.
+    \item \textbf{Per-transition discount}: store $\gamma_t=\gamma(1-\delta_t)$ with each transition and use
+    \[
+        y = r + \gamma_t V(s')
+    \]
+    instead of $y=r+\gamma(1-d)V(s')$.
+    \item \textbf{Stability detail}: update $c_{\max}^{ema}$ once per evaluation window using EMA with factor $\tau_c$.
+\end{itemize}
+
+\end{document}
