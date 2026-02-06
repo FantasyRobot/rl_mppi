@@ -13,8 +13,7 @@ rl_mppi/
 │   ├── sac/                # SAC 网络与训练组件（工具/模型定义）
 │   └── mpc/                # MPC（可复用实现/示例）
 ├── experiments/            # 运行脚本/对比测试（可直接 python 运行）
-│   ├── compare_ball/       # 2D小球：MPPI/SAC/RL-MPPI 对比与避障对比
-│   ├── sac_ball/           # SAC 训练/测试 CLI 与模型输出
+│   ├── ball2D/             # 2D小球：SAC / CD-SAC / 对比与避障
 │   ├── results/            # 脚本输出图片/结果
 │   └── mpc/                # CasADi demos + 2D小球 MPC 示例
 ├── env/                    # 环境定义
@@ -79,24 +78,58 @@ rl_mppi/
 
 ## 使用方法
 
+### Ball2D Quickstart（推荐从这里开始）
+
+1) 训练 SAC（在线交互）
+```bash
+python experiments/ball2D/sac_ball/sac_ball_cli.py train --total_steps 200000 --save_path experiments/ball2D/sac_ball/models/sac_ball_model_online.pth
+```
+
+2) 快速测试 SAC（从目标点附近初始化，更快 sanity check）
+```bash
+python experiments/ball2D/sac_ball/sac_ball_cli.py test_near --model_path experiments/ball2D/sac_ball/models/sac_ball_model_online.pth --num_tests 10
+```
+
+3) 训练 CD-SAC（TD-CD 约束版 SAC）
+```bash
+python experiments/ball2D/cd_sac_ball/cd_sac_ball_cli.py train --total_steps 200000 --save_path experiments/ball2D/cd_sac_ball/models/cd_sac_ball_model_online.pth
+```
+
+4) 快速测试 CD-SAC（同样推荐用 test_near 先看是否稳定）
+```bash
+python experiments/ball2D/cd_sac_ball/cd_sac_ball_cli.py test_near --num_tests 10 --use_best 1
+```
+
+5) 多算法对比（MPPI / SAC / RL-MPPI）
+```bash
+python experiments/ball2D/compare_ball/compare_all.py --model_path experiments/ball2D/sac_ball/models/sac_ball_model_online.pth --target_x 3 --target_y 3 --num_tests 10 --max_steps 2000
+```
+
+6) 避障对比（圆形障碍物：MPPI / SAC / RL-MPPI）
+```bash
+python experiments/ball2D/compare_ball/compare_obstacle_avoidance.py --model_path experiments/ball2D/sac_ball/models/sac_ball_model_online.pth --num_tests 10 --max_steps 2000
+```
+
+说明：默认图片/结果输出到 `experiments/results/`。
+
 ### 1. 多算法对比（MPPI / SAC / RL-MPPI）
 ```bash
-python experiments/compare_ball/compare_all.py \
-  --model_path experiments/sac_ball/models/sac_ball_model_online.pth \
+python experiments/ball2D/compare_ball/compare_all.py \
+  --model_path experiments/ball2D/sac_ball/models/sac_ball_model_online.pth \
   --target_x 3 --target_y 3 --num_tests 10 --max_steps 2000
 ```
 
 ### 2. 运行RL-MPPI算法（SAC prior + MPPI）
 ```bash
-python experiments/compare_ball/test_rl_mppi_ball.py \
-  --model_path experiments/sac_ball/models/sac_ball_model_online.pth \
+python experiments/ball2D/compare_ball/test_rl_mppi_ball.py \
+  --model_path experiments/ball2D/sac_ball/models/sac_ball_model_online.pth \
   --target_x 3 --target_y 3 --num_tests 10 --max_steps 2000
 ```
 
 ### 3. 避障对比测试（圆形障碍物：MPPI / SAC / RL-MPPI）
 ```bash
-python experiments/compare_ball/compare_obstacle_avoidance.py \
-  --model_path experiments/sac_ball/models/sac_ball_model_online.pth \
+python experiments/ball2D/compare_ball/compare_obstacle_avoidance.py \
+  --model_path experiments/ball2D/sac_ball/models/sac_ball_model_online.pth \
   --num_tests 10 --max_steps 2000
 ```
 
@@ -117,7 +150,7 @@ python experiments/compare_ball/compare_obstacle_avoidance.py \
   - [algorithms/rl_mppi/rl_mppi_ball.py](algorithms/rl_mppi/rl_mppi_ball.py)：RL-MPPI
     - 在 rollout cost 中加入与 MPPI 一致的：影响距离惩罚 / 硬碰撞代价 / 障碍物膨胀 / LOS 代价。
 
-常用调参（都在 [experiments/compare_ball/compare_obstacle_avoidance.py](experiments/compare_ball/compare_obstacle_avoidance.py) 暴露为 CLI）：
+常用调参（都在 [experiments/ball2D/compare_ball/compare_obstacle_avoidance.py](experiments/ball2D/compare_ball/compare_obstacle_avoidance.py) 暴露为 CLI）：
 
 - `--obstacle_margin`：障碍物影响距离（越大越“提前绕”）
 - `--obstacle_cost_coeff`：影响距离惩罚系数
@@ -129,7 +162,7 @@ python experiments/compare_ball/compare_obstacle_avoidance.py \
 示例（更严格的避障评测）：
 
 ```bash
-python experiments/compare_ball/compare_obstacle_avoidance.py --model_path experiments/sac_ball/models/sac_ball_model_online.pth \
+python experiments/ball2D/compare_ball/compare_obstacle_avoidance.py --model_path experiments/ball2D/sac_ball/models/sac_ball_model_online.pth \
   --terminate_on_collision --num_tests 10 --max_steps 2000 \
   --horizon 30 --num_samples 600 --noise_std 0.8 \
   --obstacle_margin 2.0 --obstacle_cost_coeff 80000 \
@@ -149,7 +182,7 @@ python algorithms/cdf_rl_mppi/cdf_2d/cdf_demo.py
 
 ### 6. 运行SAC强化学习
 ```bash
-cd experiments/sac_ball
+cd experiments/ball2D/sac_ball
 python sac_ball_cli.py train  # 在线交互训练
 python sac_ball_cli.py test_near     # 从目标点附近初始化的快速测试
 ```
@@ -186,7 +219,7 @@ $$ \max_{\pi} \mathbb{E}_{\tau \sim \pi} \left[ \sum_{t=0}^\infty \gamma^t \left
 ## 示例结果
 
 ### 1. MPPI控制轨迹
-（示例图由 `experiments/compare_ball/*` 脚本输出到 `experiments/results/`）
+（示例图由 `experiments/ball2D/compare_ball/*` 脚本输出到 `experiments/results/`）
 
 ### 2. MPC控制轨迹
 ![MPC轨迹](experiments/results/mpc_ball_trajectory.png)

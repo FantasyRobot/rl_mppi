@@ -88,7 +88,7 @@ def load_sac_policy(model_path: str, *, state_dim: int, action_dim: int) -> SACP
         raise FileNotFoundError(
             "Model file not found. Tried:\n"
             f"{tried}\n"
-            "Train first (experiments/sac_ball/sac_ball_cli.py train) or pass a valid --model_path."
+            "Train first (experiments/ball2D/sac_ball/sac_ball_cli.py train) or pass a valid --model_path."
         )
 
     import torch

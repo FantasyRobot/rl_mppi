@@ -13,7 +13,7 @@ except ModuleNotFoundError:  # pragma: no cover
     plt = None
 
 _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-_ROOT_DIR = os.path.dirname(os.path.dirname(_THIS_DIR))
+_ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(_THIS_DIR)))
 for _p in (_THIS_DIR, _ROOT_DIR):
     if _p not in sys.path:
         sys.path.insert(0, _p)

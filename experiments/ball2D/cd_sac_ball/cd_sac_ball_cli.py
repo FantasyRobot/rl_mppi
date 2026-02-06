@@ -1,6 +1,6 @@
 """Unified CLI for CD SAC Ball (TD-CD constraints).
 
-This mirrors experiments/sac_ball/sac_ball_cli.py but uses a constrained env:
+This mirrors experiments/ball2D/sac_ball/sac_ball_cli.py but uses a constrained env:
 - acceleration and velocity are constrained per component
 - constraints are handled via TD-CD (Eq.6-9 style) discounting in TD backup
 
@@ -17,7 +17,7 @@ import sys
 from dataclasses import dataclass
 
 _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-_ROOT_DIR = os.path.dirname(os.path.dirname(_THIS_DIR))
+_ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(_THIS_DIR)))
 if _THIS_DIR not in sys.path:
     sys.path.insert(0, _THIS_DIR)
 if _ROOT_DIR not in sys.path:

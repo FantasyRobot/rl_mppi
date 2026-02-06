@@ -10,7 +10,7 @@ Entry point: [cd_sac_ball_cli.py](cd_sac_ball_cli.py)
 ### Train
 
 ```bash
-cd experiments/cd_sac_ball
+cd experiments/ball2D/cd_sac_ball
 python cd_sac_ball_cli.py train \
   --total_steps 200000 \
   --vel_bound 2.0 \
@@ -23,7 +23,7 @@ python cd_sac_ball_cli.py train \
 ### Test
 
 ```bash
-cd experiments/cd_sac_ball
+cd experiments/ball2D/cd_sac_ball
 python cd_sac_ball_cli.py test_near --num_tests 10
 ```
 

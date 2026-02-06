@@ -16,8 +16,8 @@ from dataclasses import dataclass
 
 # Ensure imports work no matter where this is launched from.
 _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-# Project root is .../rl_mppi (two levels up from .../experiments/sac_ball)
-_ROOT_DIR = os.path.dirname(os.path.dirname(_THIS_DIR))
+# Project root is .../rl_mppi (three levels up from .../experiments/ball2D/sac_ball)
+_ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(_THIS_DIR)))
 if _THIS_DIR not in sys.path:
     sys.path.insert(0, _THIS_DIR)
 if _ROOT_DIR not in sys.path:

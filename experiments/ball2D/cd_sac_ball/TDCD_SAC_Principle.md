@@ -142,7 +142,7 @@ entropy 温度 $\alpha$ 的自动调节也保持不变。
   - `constraint_violation`（二值）与 `vel_violation_amount`（连续）
   - 位置：`env/envball_constraints.py`
 - 训练时根据 Eq.(7)(8) 计算 $\delta_t$ 并写入 replay 的 `discount_t=\gamma(1-\delta_t)`：
-  - 位置：`experiments/cd_sac_ball/train_cd_sac_ball_online.py`
+  - 位置：`experiments/ball2D/cd_sac_ball/train_cd_sac_ball_online.py`
 - SAC 更新时若 batch 含 `discount` 字段，则用 TD‑CD 目标：
   - 位置：`algorithms/sac/sac_utils.py`（`SACAgent.update()` 中 `reward + discount * target`）
 
