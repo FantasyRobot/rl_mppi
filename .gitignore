@@ -1,0 +1,13 @@
+# Python virtual environments
+.venv/
+venv/
+
+# Project-specific venv under experiments
+experiments/robotT12B/.venv312/
+
+# Generic venv folders (nested)
+**/.venv*/
+**/venv*/
+
+# VS Code
+.vscode/

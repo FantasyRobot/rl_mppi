@@ -90,6 +90,15 @@ def test_sac_robot2d(
     show_plot: bool = False,
     draw_links: bool = True,
     num_link_frames: int = 12,
+    obstacle_shaping: str = "cdf",
+    cdf_method: str = "offline_grid",
+    cdf_obstacle_inflate: float = 0.0,
+    cdf_margin: float = 0.25,
+    cdf_penalty: float = 800.0,
+    cdf_penalty_power: float = 2.0,
+    cdf_bonus_gain: float = 0.0,
+    cdf_bonus_cap: float = 2.0,
+    collision_penalty: float = 0.0,
 ) -> dict:
     env = Robot2DEnvironmentObstacles(
         link_lengths=link_lengths,
@@ -98,6 +107,18 @@ def test_sac_robot2d(
         obstacles=obstacles,
         obstacle_margin=0.25,
         obstacle_penalty=250.0,
+        obstacle_shaping=str(obstacle_shaping),
+        cdf_method=str(cdf_method),
+        cdf_obstacle_inflate=float(cdf_obstacle_inflate),
+        cdf_margin=float(cdf_margin),
+        cdf_penalty=float(cdf_penalty),
+        cdf_penalty_power=float(cdf_penalty_power),
+        cdf_bonus_gain=float(cdf_bonus_gain),
+        cdf_bonus_cap=float(cdf_bonus_cap),
+        collision_penalty=float(collision_penalty),
+        # Testing: do NOT apply contour/velocity shaping.
+        contour_avoidance=False,
+        contour_mode="clearance",
         terminate_on_collision=True,
         collision_check="arm",
     )
@@ -160,8 +181,8 @@ def test_sac_robot2d(
         if bool(draw_links) and first_q_traj:
             q_arr = np.asarray(first_q_traj, dtype=np.float32)
             k = int(max(2, int(num_link_frames)))
-            idx = np.linspace(0, q_arr.shape[0] - 1, num=k, dtype=int)
-            for j, t in enumerate(idx):
+            idx = np.unique(np.linspace(0, q_arr.shape[0] - 1, num=min(k, q_arr.shape[0]), dtype=int))
+            for j, t in enumerate(idx.tolist()):
                 alpha = 0.10 + 0.85 * (j / max(1, (len(idx) - 1)))
                 _draw_robot_links(ax, env, q_arr[int(t)], color="tab:blue", alpha=float(alpha), lw=2.0, marker_size=2.0)
 
@@ -198,6 +219,22 @@ def main() -> None:
     p.add_argument("--draw_links", type=int, default=1, help="Overlay robot link shapes along the rollout (1/0)")
     p.add_argument("--num_link_frames", type=int, default=12, help="How many robot poses to draw along the rollout")
 
+    p.add_argument(
+        "--obstacle_shaping",
+        type=str,
+        default="cdf",
+        choices=["cdf", "clearance", "both", "none"],
+        help="Soft obstacle penalty source for reward shaping (collision check always uses clearance).",
+    )
+    p.add_argument("--cdf_method", type=str, default="offline_grid")
+    p.add_argument("--cdf_obstacle_inflate", type=float, default=0.0)
+    p.add_argument("--cdf_margin", type=float, default=0.25)
+    p.add_argument("--cdf_penalty", type=float, default=800.0)
+    p.add_argument("--cdf_penalty_power", type=float, default=2.0)
+    p.add_argument("--cdf_bonus_gain", type=float, default=0.0)
+    p.add_argument("--cdf_bonus_cap", type=float, default=2.0)
+    p.add_argument("--collision_penalty", type=float, default=0.0)
+
     args = p.parse_args()
 
     link_lengths = [float(x.strip()) for x in str(args.link_lengths).split(",") if x.strip()]
@@ -212,6 +249,15 @@ def main() -> None:
         show_plot=bool(args.show_plot),
         draw_links=bool(int(args.draw_links)),
         num_link_frames=int(args.num_link_frames),
+        obstacle_shaping=str(args.obstacle_shaping),
+        cdf_method=str(args.cdf_method),
+        cdf_obstacle_inflate=float(args.cdf_obstacle_inflate),
+        cdf_margin=float(args.cdf_margin),
+        cdf_penalty=float(args.cdf_penalty),
+        cdf_penalty_power=float(args.cdf_penalty_power),
+        cdf_bonus_gain=float(args.cdf_bonus_gain),
+        cdf_bonus_cap=float(args.cdf_bonus_cap),
+        collision_penalty=float(args.collision_penalty),
     )
 
     print(out)

@@ -49,6 +49,7 @@ def _parse_args() -> argparse.Namespace:
 
     def add_robot(p: argparse.ArgumentParser) -> None:
         p.add_argument("--link_lengths", type=str, default="2.0,2.0", help="Comma-separated link lengths")
+        #p.add_argument("--obstacles", type=str, default="0,1.8,0.20", help="Obstacles as 'x,y,r;x,y,r'")
         p.add_argument("--obstacles", type=str, default="0,1.8,0.20", help="Obstacles as 'x,y,r;x,y,r'")
 
     p_train = sub.add_parser("train", help="Train SAC online by interacting with the environment")
@@ -60,6 +61,21 @@ def _parse_args() -> argparse.Namespace:
     p_train.add_argument("--eval_every", type=int, default=25000)
     p_train.add_argument("--include_obstacles_in_obs", type=int, default=1)
     p_train.add_argument("--max_obstacles_in_obs", type=int, default=4)
+    p_train.add_argument(
+        "--obstacle_shaping",
+        type=str,
+        default="cdf",
+        choices=["cdf", "clearance", "both", "none"],
+        help="Soft obstacle penalty source for SAC reward shaping (collision check always uses clearance).",
+    )
+    p_train.add_argument("--cdf_method", type=str, default="offline_grid")
+    p_train.add_argument("--cdf_obstacle_inflate", type=float, default=0.0)
+    p_train.add_argument("--cdf_margin", type=float, default=0.25)
+    p_train.add_argument("--cdf_penalty", type=float, default=800.0)
+    p_train.add_argument("--cdf_penalty_power", type=float, default=2.0)
+    p_train.add_argument("--cdf_bonus_gain", type=float, default=0.0)
+    p_train.add_argument("--cdf_bonus_cap", type=float, default=2.0)
+    p_train.add_argument("--collision_penalty", type=float, default=0.0)
 
     p_test = sub.add_parser("test", help="Test SAC and optionally save a trajectory plot")
     add_robot(p_test)
@@ -69,6 +85,21 @@ def _parse_args() -> argparse.Namespace:
     p_test.add_argument("--max_steps", type=int, default=450)
     p_test.add_argument("--plot_path", type=str, default=os.path.join(_RESULTS_DIR, "robot2d_sac_test.png"))
     p_test.add_argument("--show_plot", action="store_true")
+    p_test.add_argument(
+        "--obstacle_shaping",
+        type=str,
+        default="cdf",
+        choices=["cdf", "clearance", "both", "none"],
+        help="Soft obstacle penalty source for SAC reward shaping (collision check always uses clearance).",
+    )
+    p_test.add_argument("--cdf_method", type=str, default="offline_grid")
+    p_test.add_argument("--cdf_obstacle_inflate", type=float, default=0.0)
+    p_test.add_argument("--cdf_margin", type=float, default=0.25)
+    p_test.add_argument("--cdf_penalty", type=float, default=800.0)
+    p_test.add_argument("--cdf_penalty_power", type=float, default=2.0)
+    p_test.add_argument("--cdf_bonus_gain", type=float, default=0.0)
+    p_test.add_argument("--cdf_bonus_cap", type=float, default=2.0)
+    p_test.add_argument("--collision_penalty", type=float, default=0.0)
 
     return parser.parse_args()
 
@@ -92,6 +123,15 @@ def cmd_train(
     eval_every: int,
     include_obstacles_in_obs: int,
     max_obstacles_in_obs: int,
+    obstacle_shaping: str,
+    cdf_method: str,
+    cdf_obstacle_inflate: float,
+    cdf_margin: float,
+    cdf_penalty: float,
+    cdf_penalty_power: float,
+    cdf_bonus_gain: float,
+    cdf_bonus_cap: float,
+    collision_penalty: float,
 ) -> None:
     from train_sac_robot2d_online import train_sac_robot2d_online, _parse_obstacles
 
@@ -107,10 +147,38 @@ def cmd_train(
         normalize_state=True,
         include_obstacles_in_obs=bool(int(include_obstacles_in_obs)),
         max_obstacles_in_obs=int(max_obstacles_in_obs),
+        obstacle_shaping=str(obstacle_shaping),
+        cdf_method=str(cdf_method),
+        cdf_obstacle_inflate=float(cdf_obstacle_inflate),
+        cdf_margin=float(cdf_margin),
+        cdf_penalty=float(cdf_penalty),
+        cdf_penalty_power=float(cdf_penalty_power),
+        cdf_bonus_gain=float(cdf_bonus_gain),
+        cdf_bonus_cap=float(cdf_bonus_cap),
+        collision_penalty=float(collision_penalty),
     )
 
 
-def cmd_test(*, link_lengths: list[float], target: Target, obstacles: str, model_path: str, num_tests: int, max_steps: int, plot_path: str, show_plot: bool) -> None:
+def cmd_test(
+    *,
+    link_lengths: list[float],
+    target: Target,
+    obstacles: str,
+    model_path: str,
+    num_tests: int,
+    max_steps: int,
+    plot_path: str,
+    show_plot: bool,
+    obstacle_shaping: str,
+    cdf_method: str,
+    cdf_obstacle_inflate: float,
+    cdf_margin: float,
+    cdf_penalty: float,
+    cdf_penalty_power: float,
+    cdf_bonus_gain: float,
+    cdf_bonus_cap: float,
+    collision_penalty: float,
+) -> None:
     from test_sac_robot2d import test_sac_robot2d, _parse_obstacles
 
     if not os.path.exists(model_path):
@@ -128,6 +196,15 @@ def cmd_test(*, link_lengths: list[float], target: Target, obstacles: str, model
         max_steps=int(max_steps),
         plot_path=str(plot_path) if str(plot_path).strip() else None,
         show_plot=bool(show_plot),
+        obstacle_shaping=str(obstacle_shaping),
+        cdf_method=str(cdf_method),
+        cdf_obstacle_inflate=float(cdf_obstacle_inflate),
+        cdf_margin=float(cdf_margin),
+        cdf_penalty=float(cdf_penalty),
+        cdf_penalty_power=float(cdf_penalty_power),
+        cdf_bonus_gain=float(cdf_bonus_gain),
+        cdf_bonus_cap=float(cdf_bonus_cap),
+        collision_penalty=float(collision_penalty),
     )
     print(out)
 
@@ -153,6 +230,15 @@ def main() -> None:
             eval_every=int(args.eval_every),
             include_obstacles_in_obs=int(args.include_obstacles_in_obs),
             max_obstacles_in_obs=int(args.max_obstacles_in_obs),
+            obstacle_shaping=str(args.obstacle_shaping),
+            cdf_method=str(args.cdf_method),
+            cdf_obstacle_inflate=float(args.cdf_obstacle_inflate),
+            cdf_margin=float(args.cdf_margin),
+            cdf_penalty=float(args.cdf_penalty),
+            cdf_penalty_power=float(args.cdf_penalty_power),
+            cdf_bonus_gain=float(args.cdf_bonus_gain),
+            cdf_bonus_cap=float(args.cdf_bonus_cap),
+            collision_penalty=float(args.collision_penalty),
         )
         return
 
@@ -166,6 +252,15 @@ def main() -> None:
             max_steps=int(args.max_steps),
             plot_path=str(args.plot_path),
             show_plot=bool(args.show_plot),
+            obstacle_shaping=str(args.obstacle_shaping),
+            cdf_method=str(args.cdf_method),
+            cdf_obstacle_inflate=float(args.cdf_obstacle_inflate),
+            cdf_margin=float(args.cdf_margin),
+            cdf_penalty=float(args.cdf_penalty),
+            cdf_penalty_power=float(args.cdf_penalty_power),
+            cdf_bonus_gain=float(args.cdf_bonus_gain),
+            cdf_bonus_cap=float(args.cdf_bonus_cap),
+            collision_penalty=float(args.collision_penalty),
         )
         return
 

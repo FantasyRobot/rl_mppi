@@ -1,0 +1,9 @@
+dt_eff: 0.01
+action_repeat: 5
+timestep: 0.002
+vel_bound: 1.0
+acc_bound: 2.0
+nu: 6
+steps: 136
+xml_path: D:\VirtualSpace\rl_mppi\experiments\robotT12B\urdf\t12a_14_clear.xml
+model_path: D:\VirtualSpace\rl_mppi\experiments\robotT12B\models\cd_sac_t12a_14_model_online_best.pth

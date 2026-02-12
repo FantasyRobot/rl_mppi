@@ -65,6 +65,16 @@ def train_sac_robot2d_online(
     reach_threshold: float = 0.15,
     qd_max: float = 4.0,
     qdd_max: float = 8.0,
+    # Obstacle shaping strategy (per-paper): SAC uses CDF shaping by default.
+    obstacle_shaping: str = "cdf",
+    cdf_method: str = "offline_grid",
+    cdf_obstacle_inflate: float = 0.0,
+    cdf_margin: float = 0.25,
+    cdf_penalty: float = 800.0,
+    cdf_penalty_power: float = 2.0,
+    cdf_bonus_gain: float = 0.0,
+    cdf_bonus_cap: float = 2.0,
+    collision_penalty: float = 0.0,
 ) -> None:
     np.random.seed(int(seed))
     torch.manual_seed(int(seed))
@@ -76,6 +86,19 @@ def train_sac_robot2d_online(
         obstacles=obstacles,
         obstacle_margin=0.25,
         obstacle_penalty=250.0,
+        obstacle_shaping=str(obstacle_shaping),
+        cdf_method=str(cdf_method),
+        cdf_obstacle_inflate=float(cdf_obstacle_inflate),
+        cdf_margin=float(cdf_margin),
+        cdf_penalty=float(cdf_penalty),
+        cdf_penalty_power=float(cdf_penalty_power),
+        cdf_bonus_gain=float(cdf_bonus_gain),
+        cdf_bonus_cap=float(cdf_bonus_cap),
+        collision_penalty=float(collision_penalty),
+        # SAC training: do NOT modify dynamics/velocity based on CDF/clearance.
+        # Keep avoidance purely as reward shaping so the policy learns it.
+        contour_avoidance=False,
+        contour_mode="clearance",
         terminate_on_collision=True,
         collision_check="arm",
         reset_noise=float(reset_noise),
@@ -292,6 +315,23 @@ def main() -> None:
     p.add_argument("--qd_max", type=float, default=4.0)
     p.add_argument("--qdd_max", type=float, default=8.0)
 
+    # Obstacle shaping for SAC: default to CDF (dense shaping), while keeping clearance for collision detection.
+    p.add_argument(
+        "--obstacle_shaping",
+        type=str,
+        default="cdf",
+        choices=["cdf", "clearance", "both", "none"],
+        help="Soft obstacle penalty source for reward shaping (collision check always uses clearance).",
+    )
+    p.add_argument("--cdf_method", type=str, default="offline_grid", help="CDF method for shaping: offline_grid (default) or online_computation")
+    p.add_argument("--cdf_obstacle_inflate", type=float, default=0.0, help="Extra obstacle inflation for CDF shaping (added on top of env.safety_distance)")
+    p.add_argument("--cdf_margin", type=float, default=0.25, help="Hinge margin for CDF shaping penalty")
+    p.add_argument("--cdf_penalty", type=float, default=800.0, help="Penalty coefficient for CDF shaping")
+    p.add_argument("--cdf_penalty_power", type=float, default=2.0, help="Penalty power p in penalty = cdf_penalty * max(0, margin-cdf)^p")
+    p.add_argument("--cdf_bonus_gain", type=float, default=0.0, help="Optional bounded positive reward: +gain*min(cdf, cap)")
+    p.add_argument("--cdf_bonus_cap", type=float, default=2.0, help="Cap for CDF bonus term")
+    p.add_argument("--collision_penalty", type=float, default=0.0, help="Optional extra penalty applied on collision (in addition to termination)")
+
     args = p.parse_args()
 
     if bool(args.auto_entropy_tuning) and bool(args.no_auto_entropy_tuning):
@@ -327,6 +367,15 @@ def main() -> None:
         reach_threshold=float(args.reach_threshold),
         qd_max=float(args.qd_max),
         qdd_max=float(args.qdd_max),
+        obstacle_shaping=str(args.obstacle_shaping),
+        cdf_method=str(args.cdf_method),
+        cdf_obstacle_inflate=float(args.cdf_obstacle_inflate),
+        cdf_margin=float(args.cdf_margin),
+        cdf_penalty=float(args.cdf_penalty),
+        cdf_penalty_power=float(args.cdf_penalty_power),
+        cdf_bonus_gain=float(args.cdf_bonus_gain),
+        cdf_bonus_cap=float(args.cdf_bonus_cap),
+        collision_penalty=float(args.collision_penalty),
     )
 
 

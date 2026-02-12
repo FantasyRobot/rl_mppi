@@ -12,12 +12,22 @@ import sys
 import torch
 import math
 import matplotlib.pyplot as plt
-from robot2D_torch import Robot2D
-from primitives2D_torch import Circle
-from torchmin import minimize
+try:
+    # When running scripts from this folder.
+    from robot2D_torch import Robot2D
+    from primitives2D_torch import Circle
+    import robot_plot2D
+except ModuleNotFoundError:  # pragma: no cover
+    # When importing as a package module: algorithms.cdf_rl_mppi.cdf_2d.cdf
+    from algorithms.cdf_rl_mppi.cdf_2d.robot2D_torch import Robot2D
+    from algorithms.cdf_rl_mppi.cdf_2d.primitives2D_torch import Circle
+    from algorithms.cdf_rl_mppi.cdf_2d import robot_plot2D
+try:
+    from torchmin import minimize
+except ModuleNotFoundError:  # pragma: no cover
+    minimize = None
 import time
 import math
-import robot_plot2D
 import copy
 import matplotlib.gridspec as gridspec
 
@@ -45,6 +55,11 @@ class CDF2D:
 
         # c space distance field
         if not os.path.exists(os.path.join(CUR_PATH,'data2D.pt')):
+            if minimize is None:
+                raise ModuleNotFoundError(
+                    "Missing dependency 'torchmin'. data2D.pt is not present, and generating it requires torchmin. "
+                    "Install torchmin or place a precomputed data2D.pt next to this file."
+                )
             self.generate_data()
         self.q_grid_template =  torch.load(os.path.join(CUR_PATH,'data2D.pt'), map_location=self.device)
 
@@ -77,6 +92,8 @@ class CDF2D:
     def find_q(self,obj_lists,batchsize = None):
         # find q that makes d(x,q) = 0. x is the obstacle surface
         # using L-BFGS method
+        if minimize is None:
+            raise ModuleNotFoundError("Missing dependency 'torchmin' required for online_computation (find_q)")
         if not batchsize:
             batchsize = self.batchsize
             
@@ -112,6 +129,8 @@ class CDF2D:
         return q0,final_q,res.x
     
     def generate_data(self,nbDiscretization=50):
+        if minimize is None:
+            raise ModuleNotFoundError("Missing dependency 'torchmin' required to generate data2D.pt")
         x = torch.linspace(self.task_space[0][0],self.task_space[1][0],self.nbDiscretization).to(self.device)
         y = torch.linspace(self.task_space[0][1],self.task_space[1][1],self.nbDiscretization).to(self.device)
         xx,yy = torch.meshgrid(x,y)
