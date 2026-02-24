@@ -67,8 +67,44 @@
       </body>
     </body>
     
-    <body name="obstacle1" mocap="true" pos="0.8 0.0 0.5">
-      <geom name="obstacle1"  type="sphere" size="0.1" rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    <body name="obstacle1" pos="0.8 0.0 0.5">
+      <geom name="obstacle1"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle12" pos="0.8 0.0 0.6">
+      <geom name="obstacle12"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle13" pos="0.8 0.0 0.7">
+      <geom name="obstacle13"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle14" pos="0.8 0.0 0.8">
+      <geom name="obstacle14"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle15" pos="0.8 0.0 0.4">
+      <geom name="obstacle15"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle16" pos="0.8 0.0 0.3">
+      <geom name="obstacle16"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle11" pos="0.8 0.0 0.2">
+      <geom name="obstacle11"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle17" pos="0.8 0.1 0.5">
+      <geom name="obstacle17"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle18" pos="0.8 0.2 0.5">
+      <geom name="obstacle18"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle19" pos="0.8 0.3 0.5">
+      <geom name="obstacle19"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle21" pos="0.8 -0.1 0.5">
+      <geom name="obstacle21"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle22" pos="0.8 -0.2 0.5">
+      <geom name="obstacle22"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle23" pos="0.8 -0.3 0.5">
+      <geom name="obstacle23"  type="sphere" size="0.05 " rgba="1 0 0 1" conaffinity="1" contype="1"/>
     </body>
   </worldbody>
     <!-- 新增执行器部分 -->

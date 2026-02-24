@@ -14,7 +14,7 @@ safety filter $\mathcal F_{\text{safe}}(\cdot)$ (collision-avoidance / constrain
 \Ensure Control $u_t^{\text{safe}}$ applied to the robot at each time step.
 
 \State \textbf{(Offline, once)} Train policy $\pi_\phi$ in simulation (e.g., SAC/CD-SAC with goal reward + CDF-based safety shaping).
-\State \textbf{Initialize} nominal control sequence $U \!=\! \{u_0,\dots,u_{H-1}\}$ (zeros or from $\pi_\phi$).
+\State \textbf{Initialize} nominal control sequence $U \!=\! \{u_0,\dots,u_{H-1}\}$ (zeros or previous shifted solution).
 
 \For{$t=0,1,2,\dots$}
     \State Observe current state $x_t$.
@@ -28,9 +28,26 @@ safety filter $\mathcal F_{\text{safe}}(\cdot)$ (collision-avoidance / constrain
     \EndFor
     \State Set (or blend) the nominal sequence $U \gets \{\hat u_0,\dots,\hat u_{H-1}\}$.
 
-    \Statex \textbf{MPPI update (encapsulated as a function)}
-    \State $U \gets \textsc{MPPIUpdate}(x_t, U; f,\,\ell,\,\ell_f,\,H,\,K,\,\lambda,\,\Sigma,\,\mathcal U)$
-    \Statex \Comment{\textsc{MPPIUpdate} performs sampling rollouts, cost-to-go $S_k$, weight normalization, and path-integral update}
+    \Statex \textbf{MPPI sampling and path-integral update}
+    \For{$k=1$ to $K$}
+        \State $x_0^{(k)}\gets x_t$; $S_k\gets 0$
+        \For{$i=0$ to $H-1$}
+            \State Sample $\epsilon_i^{(k)}\sim\mathcal N(0,\Sigma)$
+            \State $u_i^{(k)}\gets \Pi_{\mathcal U}(u_i+\epsilon_i^{(k)})$ \Comment{project/clip to control bounds}
+            \State $x_{i+1}^{(k)}\gets f(x_i^{(k)},u_i^{(k)})$
+            \State $S_k\gets S_k + \ell(x_i^{(k)},u_i^{(k)})$
+        \EndFor
+        \State $S_k\gets S_k + \ell_f(x_H^{(k)})$
+    \EndFor
+    \State $S_{\min}\gets\min_k S_k$
+    \For{$k=1$ to $K$}
+        \State $w_k\gets\exp\big(-\frac{1}{\lambda}(S_k-S_{\min})\big)$
+    \EndFor
+    \State $\tilde w_k\gets w_k/(\sum_{j=1}^{K} w_j)$ \Comment{normalize weights}
+    \For{$i=0$ to $H-1$}
+        \State $\Delta u_i\gets \sum_{k=1}^{K} \tilde w_k\,\epsilon_i^{(k)}$
+        \State $u_i\gets \Pi_{\mathcal U}(u_i+\Delta u_i)$
+    \EndFor
 
     \Statex \textbf{Safety filtering and execution}
     \State $u_t^\star \gets u_0$

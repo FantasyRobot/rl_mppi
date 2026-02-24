@@ -11,3 +11,6 @@ experiments/robotT12B/.venv312/
 
 # VS Code
 .vscode/
+
+reference/
+draft/

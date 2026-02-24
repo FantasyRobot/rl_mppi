@@ -71,6 +71,14 @@ def main() -> None:
     p.add_argument("--smooth_cost", type=float, default=0.2)
     p.add_argument("--seed", type=int, default=0)
 
+
+    p.add_argument(
+        "--init_qpos",
+        type=float,
+        nargs='+',
+        default=None,
+        help="初始关节位置列表，如 --init_qpos 0.0 0.0 0.0 0.0 0.0 0.0"
+    )
     args = p.parse_args()
 
     xml_path = os.path.expanduser(os.path.expandvars(str(args.xml)))
@@ -94,6 +102,13 @@ def main() -> None:
     with _pushd(xml_dir):
         model = mujoco.MjModel.from_xml_path(xml_path)
         data = mujoco.MjData(model)
+        # 指定初始关节位置（可通过命令行参数传入）
+        if args.init_qpos is not None:
+            if len(args.init_qpos) != data.qpos.shape[0]:
+                raise ValueError(f"init_qpos长度({len(args.init_qpos)})与机械臂自由度({data.qpos.shape[0]})不符")
+            data.qpos[:] = np.array(args.init_qpos)
+        data.qvel[:] = np.zeros_like(data.qvel)  # 可选，初始化速度为零
+        mujoco.mj_forward(model, data)  # 更新仿真状态
 
         # Resolve sites
         goal_sid = _get_site_id(mujoco, model, str(args.goal_site))

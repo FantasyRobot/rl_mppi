@@ -22,7 +22,15 @@ def main() -> None:
     default_xml = os.path.join(this_dir, "urdf", "t12a_14_simple.xml")
 
     p = argparse.ArgumentParser(description="MuJoCo visualize t12a_14 from existing MJCF (t12a_14.xml)")
+
     p.add_argument("--xml", type=str, default=default_xml, help="Path to MJCF xml (default: t12a_14.xml)")
+    p.add_argument(
+        "--init_qpos",
+        type=float,
+        nargs='+',
+        default=None,
+        help="初始关节位置列表，如 --init_qpos 0.0 0.0 0.0 0.0 0.0 0.0"
+    )
     args = p.parse_args()
 
     xml_path = os.path.expanduser(os.path.expandvars(str(args.xml)))
@@ -52,8 +60,16 @@ def main() -> None:
         #model.opt.integrator = mujoco.mjtIntegrator.mjINT_IMPLICITFAST  # 隐式快速积分
         data = mujoco.MjData(model)
 
+
         import numpy as np
         import glfw
+
+
+        # 设置初始关节位置
+        if args.init_qpos is not None:
+            if len(args.init_qpos) != data.qpos.shape[0]:
+                raise ValueError(f"init_qpos长度({len(args.init_qpos)})与机械臂自由度({data.qpos.shape[0]})不符")
+            data.qpos[:] = np.array(args.init_qpos)
 
         viewer_ref: dict[str, object | None] = {"viewer": None}
 

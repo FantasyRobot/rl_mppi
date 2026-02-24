@@ -137,15 +137,19 @@ class T12A14MuJoCoEnv:
 
         return np.concatenate([qn, qvn, rel], axis=0).astype(np.float32)
 
-    def reset(self) -> np.ndarray:
+    def reset(self, init_qpos=None) -> np.ndarray:
         self._step_count = 0
-
-        q0 = self._rng.normal(0.0, float(self.reset_noise), size=(self.nu,)).astype(np.float64)
-        q0 = np.clip(q0, self.ctrl_min, self.ctrl_max)
-        self.data.qpos[:] = 0.0
         self.data.qvel[:] = 0.0
-        self.data.qpos[: self.nu] = q0
-
+        if init_qpos is not None:
+            q0 = np.array(init_qpos, dtype=np.float64)
+            if q0.shape[0] != self.nu:
+                raise ValueError(f"init_qpos长度({q0.shape[0]})与机械臂自由度({self.nu})不符")
+            q0 = np.clip(q0, self.ctrl_min, self.ctrl_max)
+            self.data.qpos[: self.nu] = q0
+        else:
+            q0 = self._rng.normal(0.0, float(self.reset_noise), size=(self.nu,)).astype(np.float64)
+            q0 = np.clip(q0, self.ctrl_min, self.ctrl_max)
+            self.data.qpos[: self.nu] = q0
         self._mujoco.mj_forward(self.model, self.data)
         self._update_goal()
         return self.get_obs()

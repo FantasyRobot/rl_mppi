@@ -65,8 +65,15 @@ def _parse_args() -> argparse.Namespace:
     p_test = sub.add_parser("test", help="Test SAC policy")
     add_common(p_test)
     p_test.add_argument("--model_path", type=str, default=os.path.join(_MODELS_DIR, "sac_t12a_14_model.pth"))
+    p_test.add_argument(
+        "--init_qpos",
+        type=float,
+        nargs='+',
+        default=None,
+        help="初始关节位置列表，如 --init_qpos 0.0 0.0 0.0 0.0 0.0 0.0"
+    )
     p_test.add_argument("--save_npz", type=str, default=os.path.join(_RESULTS_DIR, "t12a_14_sac_test.npz"))
-    p_test.add_argument("--viewer", action="store_true", help="Show MuJoCo viewer during test rollout")
+    p_test.add_argument("--viewer", action="store_true", default=True, help="Show MuJoCo viewer during test rollout (默认开启)")
     p_test.add_argument("--exit_on_done", action="store_true", help="Close immediately when done (viewer only)")
     p_test.add_argument("--no_draw_traj", action="store_true", help="Disable drawing end-effector trajectory")
     p_test.add_argument("--traj_max_points", type=int, default=400, help="Max trajectory points")
@@ -123,6 +130,7 @@ def main() -> None:
                 traj_max_points=int(args.traj_max_points),
                 traj_stride=int(args.traj_stride),
                 traj_width=float(args.traj_width),
+                init_qpos=args.init_qpos,
             )
         else:
             from test_sac_t12a_14 import test_sac_t12a_14
@@ -134,6 +142,7 @@ def main() -> None:
                 eef_site=str(args.eef_site),
                 max_steps=int(args.max_steps),
                 action_repeat=int(args.action_repeat),
+                init_qpos=args.init_qpos,
             )
 
         # Save minimal trajectories for later plotting.

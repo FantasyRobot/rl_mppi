@@ -69,6 +69,7 @@ def test_sac_t12a_14(
     eef_site: str = "end_effector",
     max_steps: int = 2500,
     action_repeat: int = 5,
+    init_qpos=None,
 ) -> dict:
     from env.envmujoco_t12a_14 import T12A14MuJoCoEnv
 
@@ -82,7 +83,7 @@ def test_sac_t12a_14(
         action_repeat=int(action_repeat),
     )
 
-    obs = env.reset()
+    obs = env.reset(init_qpos=init_qpos)
     eef_traj: list[np.ndarray] = []
     dist_traj: list[float] = []
 
@@ -116,6 +117,7 @@ def test_sac_t12a_14_viewer(
     traj_max_points: int = 400,
     traj_stride: int = 1,
     traj_width: float = 4.0,
+    init_qpos=None,
 ) -> dict:
     """Run SAC policy in a MuJoCo viewer and draw the end-effector trajectory."""
 
@@ -197,7 +199,7 @@ def test_sac_t12a_14_viewer(
                 mujoco.mjv_connector(geom, mujoco.mjtGeom.mjGEOM_LINE, width, points[i], points[i + 1])
             scn.ngeom = nseg
 
-    obs = env.reset()
+    obs = env.reset(init_qpos=init_qpos)
     traj_points: list[np.ndarray] = []
     eef_traj: list[np.ndarray] = []
     dist_traj: list[float] = []
