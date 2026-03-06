@@ -11,6 +11,7 @@ rl_mppi/
 │   ├── mppi/               # MPPI
 │   ├── rl_mppi/            # RL-MPPI（SAC引导的MPPI）
 │   ├── sac/                # SAC 网络与训练组件（工具/模型定义）
+│   ├── gnn/                # GNN（图神经网络）编码器，用于机器人+障碍物特征融合
 │   └── mpc/                # MPC（可复用实现/示例）
 ├── experiments/            # 运行脚本/对比测试（可直接 python 运行）
 │   ├── compare_ball/       # 2D小球：MPPI/SAC/RL-MPPI 对比与避障对比
@@ -54,6 +55,12 @@ rl_mppi/
 - 支持离线训练数据生成
 - 提供预训练模型和测试脚本
 - 可用于生成MPPI算法的初始策略
+
+### 6. 图神经网络编码器（gnn/）
+- 将机器人状态与可变数量障碍物编码为固定维度的特征向量
+- 支持置换不变性（障碍物顺序无关）和变长障碍物输入
+- 核心组件：`EdgeModel`（边特征更新）、`NodeModel`（节点聚合）、`GNNLayer`（单轮消息传递）、`ObstacleEncoder`（完整编码器）
+- 编码后的特征可直接替换 SAC 等策略网络的扁平状态输入
 
 ## 安装说明
 
@@ -182,6 +189,42 @@ SAC是一种基于最大熵框架的强化学习算法，同时优化策略的�
 $$ \max_{\pi} \mathbb{E}_{\tau \sim \pi} \left[ \sum_{t=0}^\infty \gamma^t \left( r(s_t, a_t) + \alpha H(\pi(\cdot|s_t)) \right) \right] $$
 
 其中，$H(\pi)$是策略的熵，$\alpha$是熵温度参数。
+
+### 5. GNN（Graph Neural Network）
+
+GNN 将当前环境建模为一张图，实现对**可变数量**障碍物的置换不变编码：
+
+- **节点**：机器人节点（特征 $[x,y,v_x,v_y,g_x-x,g_y-y]$）和各障碍物节点（特征 $[o_x,o_y,r]$）。
+- **边**：障碍物节点 → 机器人节点（以及可选的反向边），边特征为相对位移和距离 $[dx, dy, dist]$。
+
+每层 GNN 执行两步消息传递：
+
+**边更新（Edge Model）**：
+
+$$e_{ij}^{(l+1)} = \phi_e\bigl([h_i^{(l)},\; h_j^{(l)},\; e_{ij}^{(l)}]\bigr)$$
+
+**节点更新（Node Model）**（目标节点聚合所有来自邻居的消息）：
+
+$$h_i^{(l+1)} = \phi_n\!\left(\left[h_i^{(l)},\; \sum_{j \in \mathcal{N}(i)} e_{ij}^{(l+1)}\right]\right)$$
+
+经过若干轮消息传递后，机器人节点特征即融合了所有障碍物的空间关系信息，
+可作为策略网络（SAC PolicyNetwork）的输入替代扁平状态向量，支持任意数量障碍物的泛化。
+
+**使用示例：**
+
+```python
+from algorithms.gnn import ObstacleEncoder, build_robot_obstacle_graph
+import numpy as np
+
+encoder = ObstacleEncoder(hidden_dim=64, node_out_dim=64, num_layers=2)
+
+rs_t, tp_t, obs_t = build_robot_obstacle_graph(
+    robot_state=np.array([1.0, 2.0, 0.1, -0.2]),   # [x, y, vx, vy]
+    target_pos=np.array([3.0, 3.0]),                 # [gx, gy]
+    obstacles=[(0.5, 1.0, 0.3), (2.0, 2.5, 0.2)],   # [(ox, oy, r), ...]
+)
+features = encoder(rs_t, tp_t, obs_t)  # shape: (64,)
+```
 
 ## 示例结果
 
