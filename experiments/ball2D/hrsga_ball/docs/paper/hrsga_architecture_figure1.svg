@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#425466" />
+    </marker>
+    <style>
+      .title { font: 700 28px 'Segoe UI', Arial, sans-serif; fill: #1f2937; }
+      .group-title { font: 700 18px 'Segoe UI', Arial, sans-serif; fill: #334155; }
+      .node-text { font: 16px 'Segoe UI', Arial, sans-serif; fill: #1f2937; }
+      .small { font: 14px 'Segoe UI', Arial, sans-serif; fill: #475569; }
+      .group { fill: #ffffff; stroke: #b8c2cc; stroke-width: 2; rx: 18; }
+      .input { fill: #eef3f8; stroke: #4f6f8f; stroke-width: 2; rx: 14; }
+      .encode { fill: #f7f4ec; stroke: #9a7b4f; stroke-width: 2; rx: 14; }
+      .attend { fill: #f4eef8; stroke: #7c63a8; stroke-width: 2; rx: 14; }
+      .decision { fill: #eef7f0; stroke: #4f8c62; stroke-width: 2; rx: 14; }
+      .output { fill: #fff8ea; stroke: #b28a2e; stroke-width: 2; rx: 14; }
+      .arrow { stroke: #425466; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <text x="44" y="48" class="title">HRSGA Overall Architecture</text>
+  <text x="44" y="76" class="small">Robot-task-obstacle heterogeneous graph, relation-aware sparse attention, robot-centric fusion, and actor-critic decision heads.</text>
+
+  <rect x="60" y="112" width="220" height="540" class="group" />
+  <text x="132" y="144" class="group-title">Input</text>
+
+  <rect x="92" y="188" width="156" height="74" class="input" />
+  <text x="132" y="220" class="node-text">环境状态</text>
+  <text x="112" y="246" class="small">Robot / Task / Obstacle</text>
+
+  <rect x="92" y="338" width="156" height="104" class="input" />
+  <text x="122" y="372" class="node-text">异质图构建</text>
+  <text x="112" y="400" class="small">节点: V<tspan baseline-shift="sub" font-size="12">r</tspan>, V<tspan baseline-shift="sub" font-size="12">t</tspan>, V<tspan baseline-shift="sub" font-size="12">o</tspan></text>
+  <text x="112" y="426" class="small">边: E<tspan baseline-shift="sub" font-size="12">rr</tspan>, E<tspan baseline-shift="sub" font-size="12">tr</tspan>, E<tspan baseline-shift="sub" font-size="12">or</tspan></text>
+
+  <rect x="328" y="112" width="252" height="540" class="group" />
+  <text x="398" y="144" class="group-title">特征编码层</text>
+
+  <rect x="374" y="188" width="160" height="74" class="encode" />
+  <text x="404" y="232" class="node-text">机器人编码器 E<tspan baseline-shift="sub" font-size="12">r</tspan></text>
+
+  <rect x="374" y="338" width="160" height="74" class="encode" />
+  <text x="420" y="382" class="node-text">任务编码器 E<tspan baseline-shift="sub" font-size="12">t</tspan></text>
+
+  <rect x="374" y="488" width="160" height="74" class="encode" />
+  <text x="404" y="532" class="node-text">障碍编码器 E<tspan baseline-shift="sub" font-size="12">o</tspan></text>
+
+  <rect x="628" y="112" width="294" height="540" class="group" />
+  <text x="710" y="144" class="group-title">关系建模层</text>
+
+  <rect x="674" y="170" width="202" height="78" class="attend" />
+  <text x="706" y="204" class="node-text">异质关系多头注意力</text>
+  <text x="688" y="228" class="small">Robot-Robot / Task-Robot / Obstacle-Robot</text>
+
+  <rect x="674" y="286" width="202" height="86" class="attend" />
+  <text x="706" y="320" class="node-text">几何与时序双偏置打分</text>
+  <text x="690" y="346" class="small">相对位姿 / 可达性 / 时间窗 / 冲突窗口</text>
+
+  <rect x="674" y="412" width="202" height="74" class="attend" />
+  <text x="722" y="456" class="node-text">Top-K 稀疏边选择</text>
+
+  <rect x="674" y="526" width="202" height="74" class="attend" />
+  <text x="722" y="570" class="node-text">分关系消息聚合</text>
+
+  <rect x="970" y="112" width="252" height="540" class="group" />
+  <text x="1052" y="144" class="group-title">决策层</text>
+
+  <rect x="1016" y="188" width="160" height="90" class="decision" />
+  <text x="1040" y="220" class="node-text">机器人中心式融合更新</text>
+  <text x="1040" y="246" class="small">Global Context +</text>
+  <text x="1048" y="268" class="small">Gated Residual</text>
+
+  <rect x="1016" y="340" width="160" height="74" class="decision" />
+  <text x="1060" y="372" class="node-text">策略头 Actor</text>
+  <text x="1052" y="398" class="small">输出联合动作</text>
+
+  <rect x="1016" y="468" width="160" height="74" class="decision" />
+  <text x="1060" y="500" class="node-text">价值头 Critic</text>
+  <text x="1048" y="526" class="small">评估状态动作价值</text>
+
+  <rect x="1016" y="594" width="160" height="44" class="output" />
+  <text x="1048" y="622" class="node-text">多机器人联合动作 / Q 值</text>
+
+  <path d="M170 262 L170 338" class="arrow" />
+
+  <path d="M248 390 L374 225" class="arrow" />
+  <path d="M248 390 L374 375" class="arrow" />
+  <path d="M248 390 L374 525" class="arrow" />
+
+  <path d="M534 225 L674 209" class="arrow" />
+  <path d="M534 375 L674 209" class="arrow" />
+  <path d="M534 525 L674 209" class="arrow" />
+
+  <path d="M775 248 L775 286" class="arrow" />
+  <path d="M775 372 L775 412" class="arrow" />
+  <path d="M775 486 L775 526" class="arrow" />
+
+  <path d="M876 563 L1016 233" class="arrow" />
+  <path d="M1096 278 L1096 340" class="arrow" />
+  <path d="M1096 278 L1096 468" class="arrow" />
+  <path d="M1096 414 L1096 594" class="arrow" />
+  <path d="M1096 542 L1096 594" class="arrow" />
+</svg>

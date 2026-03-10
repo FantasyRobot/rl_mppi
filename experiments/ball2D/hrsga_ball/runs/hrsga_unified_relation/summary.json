@@ -1,0 +1,22 @@
+{
+  "run_name": "hrsga_unified_relation",
+  "run_dir": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_ball\\runs\\hrsga_unified_relation",
+  "best_score": 0.5398437500000001,
+  "best_eval": {
+    "success_rate": 0.8125,
+    "avg_completed_fraction": 0.9375,
+    "avg_deadline_satisfaction": 0.890625,
+    "avg_collisions": 11.6875,
+    "avg_mean_task_distance": 0.3517992413310951,
+    "avg_min_pair_distance": 0.34521856809299173,
+    "avg_missed_deadlines": 0.25,
+    "avg_steps": 147.375
+  },
+  "final_epoch": 120,
+  "config_path": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_ball\\runs\\hrsga_unified_relation\\config.json",
+  "metrics_path": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_ball\\runs\\hrsga_unified_relation\\logs\\metrics.jsonl",
+  "best_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_ball\\runs\\hrsga_unified_relation\\checkpoints\\hrsga_ball_best.pt",
+  "latest_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_ball\\runs\\hrsga_unified_relation\\checkpoints\\hrsga_ball_latest.pt",
+  "canonical_best_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_ball\\models\\hrsga_ball_best.pt",
+  "canonical_latest_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_ball\\models\\hrsga_ball_latest.pt"
+}

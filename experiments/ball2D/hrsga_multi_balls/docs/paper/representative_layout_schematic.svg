@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560">
+  <defs>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2b6cb0" />
+    </marker>
+    <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#c05621" />
+    </marker>
+    <style>
+      .title { font: 700 24px 'Segoe UI', Arial, sans-serif; fill: #1a202c; }
+      .body { font: 16px 'Segoe UI', Arial, sans-serif; fill: #2d3748; }
+      .small { font: 14px 'Segoe UI', Arial, sans-serif; fill: #4a5568; }
+      .label { font: 700 14px 'Segoe UI', Arial, sans-serif; fill: #1a202c; }
+      .panel { fill: #f8fafc; stroke: #cbd5e0; stroke-width: 2; }
+      .arena { fill: #fffdf8; stroke: #4a5568; stroke-width: 2.5; }
+      .obstacle { fill: #fed7d7; stroke: #c53030; stroke-width: 2.5; }
+      .start { fill: #bee3f8; stroke: #2b6cb0; stroke-width: 2.5; }
+      .goal { fill: #fbd38d; stroke: #c05621; stroke-width: 2.5; }
+      .corridor { stroke: #a0aec0; stroke-width: 2; stroke-dasharray: 8 6; }
+      .trajL { fill: none; stroke: #2b6cb0; stroke-width: 3; stroke-dasharray: 10 8; marker-end: url(#arrowBlue); }
+      .trajR { fill: none; stroke: #c05621; stroke-width: 3; stroke-dasharray: 10 8; marker-end: url(#arrowOrange); }
+    </style>
+  </defs>
+
+  <text x="42" y="44" class="title">Representative Layout Schematic</text>
+  <text x="42" y="72" class="body">Fixed bilateral starts + central dual obstacles + opposite-side targets with 4 discrete y-order permutations.</text>
+
+  <rect x="36" y="96" width="658" height="424" rx="18" class="panel" />
+  <rect x="84" y="132" width="562" height="352" rx="8" class="arena" />
+
+  <text x="104" y="122" class="small">World x in [-4.5, 4.5], starts/tasks placed near x = +/- 3.7</text>
+  <line x1="365" y1="132" x2="365" y2="484" class="corridor" />
+
+  <circle cx="365" cy="205" r="44" class="obstacle" />
+  <circle cx="365" cy="411" r="44" class="obstacle" />
+  <text x="330" y="210" class="label">Obs U</text>
+  <text x="330" y="416" class="label">Obs L</text>
+
+  <line x1="260" y1="308" x2="470" y2="308" class="corridor" />
+  <text x="302" y="297" class="small">narrow coordination corridor</text>
+
+  <circle cx="132" cy="205" r="16" class="start" />
+  <circle cx="132" cy="411" r="16" class="start" />
+  <circle cx="598" cy="205" r="16" class="start" />
+  <circle cx="598" cy="411" r="16" class="start" />
+
+  <rect x="201" y="189" width="26" height="26" class="goal" />
+  <rect x="201" y="395" width="26" height="26" class="goal" />
+  <rect x="503" y="189" width="26" height="26" class="goal" />
+  <rect x="503" y="395" width="26" height="26" class="goal" />
+
+  <text x="106" y="182" class="label">L1</text>
+  <text x="106" y="438" class="label">L2</text>
+  <text x="580" y="182" class="label">R1</text>
+  <text x="580" y="438" class="label">R2</text>
+
+  <text x="201" y="182" class="label">Left goals</text>
+  <text x="503" y="182" class="label">Right goals</text>
+
+  <path d="M148 205 C 240 205, 295 280, 503 205" class="trajL" />
+  <path d="M148 411 C 240 411, 295 336, 503 411" class="trajL" />
+  <path d="M582 205 C 505 205, 455 336, 227 411" class="trajR" />
+  <path d="M582 411 C 500 411, 455 280, 227 205" class="trajR" />
+
+  <text x="110" y="510" class="small">Blue circles: left/right starts</text>
+  <text x="292" y="510" class="small">Orange squares: opposite-side task slots</text>
+  <text x="538" y="510" class="small">Dashed paths: representative crossing / merge conflicts</text>
+
+  <rect x="726" y="96" width="216" height="424" rx="18" class="panel" />
+  <text x="748" y="132" class="label">Scenario Variants</text>
+  <text x="748" y="162" class="body">seed mod 4 selects</text>
+  <text x="748" y="186" class="body">one target-order pattern:</text>
+
+  <text x="748" y="232" class="label">Pattern 0</text>
+  <text x="748" y="254" class="small">straight-through pairing</text>
+
+  <text x="748" y="300" class="label">Pattern 1</text>
+  <text x="748" y="322" class="small">reversed y-order</text>
+
+  <text x="748" y="368" class="label">Pattern 2</text>
+  <text x="748" y="390" class="small">cyclic shift in y-order</text>
+
+  <text x="748" y="436" class="label">Pattern 3</text>
+  <text x="748" y="458" class="small">alternating outer-inner order</text>
+
+  <text x="748" y="500" class="small">All variants preserve the same</text>
+  <text x="748" y="520" class="small">starts, obstacles, and corridor.</text>
+</svg>
