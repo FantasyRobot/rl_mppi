@@ -1,0 +1,95 @@
+{
+  "layout_mode": "representative",
+  "num_tests": 5,
+  "seed_start": 5300,
+  "hrsga_model_path": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_ball\\models\\hrsga_ball_best.pt",
+  "gnn_model_path": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_ball\\models\\standard_gnn_ball_best.pt",
+  "plot_path": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_ball\\runs\\benchmarks\\compare_trained_gnn_hrsga_representative.png",
+  "runs": [
+    {
+      "seed": 5300,
+      "standard_gnn": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      }
+    },
+    {
+      "seed": 5301,
+      "standard_gnn": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      }
+    },
+    {
+      "seed": 5302,
+      "standard_gnn": {
+        "success": false,
+        "completed_tasks": 1,
+        "collisions": 1,
+        "collision_stop": true,
+        "deadline_satisfaction": 0.25
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      }
+    },
+    {
+      "seed": 5303,
+      "standard_gnn": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      }
+    },
+    {
+      "seed": 5304,
+      "standard_gnn": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      }
+    }
+  ]
+}

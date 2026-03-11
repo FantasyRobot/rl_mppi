@@ -1,0 +1,78 @@
+{
+  "layout_mode": "representative",
+  "num_tests": 4,
+  "seed_start": 5400,
+  "hrsga_model_path": "d:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\hrsga_multi_4b8t_long_run\\checkpoints\\hrsga_ball_best.pt",
+  "gnn_model_path": "d:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\standard_gnn_multi_4b8t_long_run\\checkpoints\\standard_gnn_ball_best.pt",
+  "plot_path": "d:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\benchmarks\\compare_trained_gnn_hrsga_representative_2r8t.png",
+  "runs": [
+    {
+      "seed": 5400,
+      "standard_gnn": {
+        "success": true,
+        "completed_tasks": 8,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 8,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      }
+    },
+    {
+      "seed": 5401,
+      "standard_gnn": {
+        "success": false,
+        "completed_tasks": 7,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 0.875
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 8,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      }
+    },
+    {
+      "seed": 5402,
+      "standard_gnn": {
+        "success": true,
+        "completed_tasks": 8,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 0.875
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 8,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      }
+    },
+    {
+      "seed": 5403,
+      "standard_gnn": {
+        "success": true,
+        "completed_tasks": 8,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 8,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      }
+    }
+  ]
+}

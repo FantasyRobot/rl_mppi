@@ -28,6 +28,17 @@ def _append_jsonl(path, payload):
         handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
 
+def _safe_save_checkpoint(agent, path, *, epoch, best_score, optimizer, required=True):
+    try:
+        agent.save(path, epoch=epoch, best_score=best_score, optimizer=optimizer)
+        return True
+    except Exception as error:
+        if required:
+            raise
+        print(f"[WARN] checkpoint sync skipped path={path} error={error}")
+        return False
+
+
 def _build_run_paths(output_root, run_name):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     resolved_run_name = run_name or f"hrsga_run_{timestamp}"
@@ -325,8 +336,8 @@ def train(
             if score > best_score:
                 best_score = score
                 best_eval_metrics = epoch_record.get("eval")
-                agent.save(run_paths["best_path"], epoch=epoch, best_score=best_score, optimizer=optimizer)
-                agent.save(run_paths["canonical_best_path"], epoch=epoch, best_score=best_score, optimizer=optimizer)
+                _safe_save_checkpoint(agent, run_paths["best_path"], epoch=epoch, best_score=best_score, optimizer=optimizer, required=True)
+                _safe_save_checkpoint(agent, run_paths["canonical_best_path"], epoch=epoch, best_score=best_score, optimizer=optimizer, required=False)
                 log_line += " best=updated"
                 epoch_record["best_updated"] = True
 
@@ -334,12 +345,12 @@ def train(
         print(log_line)
 
         if save_interval > 0 and epoch % save_interval == 0:
-            agent.save(run_paths["latest_path"], epoch=epoch, best_score=best_score, optimizer=optimizer)
-            agent.save(run_paths["canonical_latest_path"], epoch=epoch, best_score=best_score, optimizer=optimizer)
+            _safe_save_checkpoint(agent, run_paths["latest_path"], epoch=epoch, best_score=best_score, optimizer=optimizer, required=True)
+            _safe_save_checkpoint(agent, run_paths["canonical_latest_path"], epoch=epoch, best_score=best_score, optimizer=optimizer, required=False)
             print(f"[SAVE] epoch={epoch} latest checkpoint saved to {run_paths['latest_path']}")
 
-    agent.save(run_paths["latest_path"], epoch=start_epoch + epochs, best_score=best_score, optimizer=optimizer)
-    agent.save(run_paths["canonical_latest_path"], epoch=start_epoch + epochs, best_score=best_score, optimizer=optimizer)
+    _safe_save_checkpoint(agent, run_paths["latest_path"], epoch=start_epoch + epochs, best_score=best_score, optimizer=optimizer, required=True)
+    _safe_save_checkpoint(agent, run_paths["canonical_latest_path"], epoch=start_epoch + epochs, best_score=best_score, optimizer=optimizer, required=False)
     _save_json(
         run_paths["summary_path"],
         {

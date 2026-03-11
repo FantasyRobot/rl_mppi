@@ -1,0 +1,22 @@
+{
+  "config": {
+    "epochs": 120,
+    "batch_size": 64,
+    "learning_rate": 0.0003,
+    "weight_decay": 1e-05,
+    "train_episodes": 320,
+    "val_episodes": 64,
+    "rollout_episodes": 16,
+    "eval_interval": 5,
+    "save_interval": 10,
+    "num_balls": 4,
+    "num_tasks": 8,
+    "max_steps": 180,
+    "hidden_dim": 128,
+    "edge_hidden_dim": 64,
+    "resume_path": null,
+    "seed": 4300,
+    "run_name": "standard_gnn_multi_4b8t_long_run",
+    "output_root": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs"
+  }
+}

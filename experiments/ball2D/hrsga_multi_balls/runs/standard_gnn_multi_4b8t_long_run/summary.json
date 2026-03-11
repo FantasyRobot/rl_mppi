@@ -1,0 +1,18 @@
+{
+  "run_name": "standard_gnn_multi_4b8t_long_run",
+  "run_dir": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\standard_gnn_multi_4b8t_long_run",
+  "best_score": 1.3250000000000002,
+  "best_eval": {
+    "success_rate": 1.0,
+    "avg_completed_fraction": 1.0,
+    "avg_deadline_satisfaction": 1.0,
+    "avg_collisions": 0.5,
+    "avg_mean_task_distance": 0.0,
+    "avg_min_pair_distance": 0.47270116483749147,
+    "avg_missed_deadlines": 0.0,
+    "avg_steps": 37.5625
+  },
+  "final_epoch": 120,
+  "best_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\standard_gnn_multi_4b8t_long_run\\checkpoints\\standard_gnn_ball_best.pt",
+  "latest_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\standard_gnn_multi_4b8t_long_run\\checkpoints\\standard_gnn_ball_latest.pt"
+}

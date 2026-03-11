@@ -1,4 +1,5 @@
 import os
+import time
 
 import numpy as np
 import torch
@@ -129,7 +130,7 @@ class StandardGNNBallAgent:
         }
         if optimizer is not None:
             checkpoint["optimizer_state"] = optimizer.state_dict()
-        torch.save(checkpoint, path)
+        _save_checkpoint_with_retry(checkpoint, path)
 
     def load(self, path, optimizer=None):
         checkpoint = torch.load(path, map_location=self.device)
@@ -155,6 +156,30 @@ def load_agent_from_checkpoint(path, device=None):
     agent.model.load_state_dict(checkpoint["model_state"])
     agent.model.eval()
     return agent
+
+
+def _save_checkpoint_with_retry(checkpoint, path, attempts=6, retry_delay=0.6):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    tmp_path = f"{path}.tmp"
+    last_error = None
+    for attempt in range(1, attempts + 1):
+        try:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+            torch.save(checkpoint, tmp_path)
+            os.replace(tmp_path, path)
+            return
+        except (OSError, RuntimeError) as error:
+            last_error = error
+        finally:
+            if os.path.exists(tmp_path):
+                try:
+                    os.remove(tmp_path)
+                except OSError:
+                    pass
+        if attempt < attempts:
+            time.sleep(retry_delay)
+    raise RuntimeError(f"Failed to save checkpoint to {path} after {attempts} attempts") from last_error
 
 
 def evaluate_agent(agent, num_episodes=10, num_balls=None, num_tasks=None, max_steps=None, base_seed=5300):

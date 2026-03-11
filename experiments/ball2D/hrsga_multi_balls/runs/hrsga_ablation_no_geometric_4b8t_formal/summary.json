@@ -1,0 +1,23 @@
+{
+  "run_name": "hrsga_ablation_no_geometric_4b8t_formal",
+  "run_dir": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\hrsga_ablation_no_geometric_4b8t_formal",
+  "best_score": 0.14062499999999994,
+  "best_eval": {
+    "success_rate": 0.25,
+    "avg_completed_fraction": 0.4375,
+    "avg_deadline_satisfaction": 0.4375,
+    "avg_collisions": 0.75,
+    "avg_mean_task_distance": 1.7964484757495027,
+    "avg_min_pair_distance": 0.46957086987563174,
+    "avg_missed_deadlines": 0.0,
+    "avg_steps": 65.25,
+    "collision_stop_rate": 0.75
+  },
+  "final_epoch": 120,
+  "config_path": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\hrsga_ablation_no_geometric_4b8t_formal\\config.json",
+  "metrics_path": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\hrsga_ablation_no_geometric_4b8t_formal\\logs\\metrics.jsonl",
+  "best_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\hrsga_ablation_no_geometric_4b8t_formal\\checkpoints\\hrsga_ball_best.pt",
+  "latest_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\hrsga_ablation_no_geometric_4b8t_formal\\checkpoints\\hrsga_ball_latest.pt",
+  "canonical_best_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\models\\hrsga_ball_best.pt",
+  "canonical_latest_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\models\\hrsga_ball_latest.pt"
+}

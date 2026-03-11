@@ -48,6 +48,8 @@ def _apply_config_overrides(args, parser, argv):
         return args
     with open(args.config_path, "r", encoding="utf-8") as handle:
         config = json.load(handle)
+    if isinstance(config, dict) and isinstance(config.get("config"), dict):
+        config = config["config"]
     valid_dests = {action.dest for action in parser._actions}
     explicit_keys = _explicit_cli_keys(argv)
     for key, value in config.items():
@@ -69,6 +71,7 @@ def build_train_kwargs(args):
         "eval_interval": args.eval_interval,
         "save_interval": args.save_interval,
         "num_balls": args.num_balls,
+        "num_tasks": args.num_tasks,
         "max_steps": args.max_steps,
         "hidden_dim": args.hidden_dim,
         "num_heads": args.num_heads,
@@ -109,6 +112,7 @@ def main():
     parser.add_argument("--eval_interval", type=int, default=5)
     parser.add_argument("--save_interval", type=int, default=10)
     parser.add_argument("--num_balls", type=int, default=4)
+    parser.add_argument("--num_tasks", type=int, default=8)
     parser.add_argument("--max_steps", type=int, default=180)
     parser.add_argument("--hidden_dim", type=int, default=128)
     parser.add_argument("--num_heads", type=int, default=4)
