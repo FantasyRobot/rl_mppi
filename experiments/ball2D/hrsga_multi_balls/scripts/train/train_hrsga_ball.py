@@ -13,6 +13,7 @@ ROOT_DIR = os.path.dirname(SCRIPTS_DIR)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
+from envball_hrsga import HRSGABallEnvironment
 from hrsga_ball_model import HRSGABallAgent, build_behavior_dataset, compute_action_loss, evaluate_agent, iterate_minibatches
 
 
@@ -77,6 +78,8 @@ def _apply_config_overrides(args, parser, argv):
         return args
     with open(args.config_path, "r", encoding="utf-8") as handle:
         config = json.load(handle)
+    if isinstance(config, dict) and isinstance(config.get("config"), dict):
+        config = config["config"]
     valid_dests = {action.dest for action in parser._actions}
     explicit_keys = _explicit_cli_keys(argv)
     for key, value in config.items():
@@ -84,6 +87,11 @@ def _apply_config_overrides(args, parser, argv):
             continue
         setattr(args, key, value)
     return args
+
+
+def _task_rule_config(num_balls, num_tasks, max_steps):
+    env = HRSGABallEnvironment(num_balls=num_balls, num_tasks=num_tasks, max_steps=max_steps)
+    return env.task_rule_config()
 
 
 def _split_dataset(dataset, train_ratio):
@@ -205,6 +213,7 @@ def train(
         "expert_max_collisions": dataset_metadata.get("expert_max_collisions"),
         "dropped_expert_stats": _dataset_summary(dataset_metadata.get("dropped_expert_stats", [])),
     }
+    task_rules = _task_rule_config(num_balls=num_balls, num_tasks=num_tasks, max_steps=max_steps)
     print(
         f"[DATA] train_samples={dataset_summary['train_samples']} val_samples={dataset_summary['val_samples']} "
         f"expert_stats={dataset_summary['expert_stats']} {dataset_summary['dataset_filter']} "
@@ -247,6 +256,7 @@ def train(
         {
             "config": resolved_config,
             "dataset": dataset_summary,
+            "task_rules": task_rules,
         },
     )
 
@@ -358,6 +368,7 @@ def train(
             "run_dir": run_paths["run_dir"],
             "best_score": float(best_score),
             "best_eval": best_eval_metrics,
+            "task_rules": task_rules,
             "final_epoch": int(start_epoch + epochs),
             "config_path": run_paths["config_path"],
             "metrics_path": run_paths["metrics_path"],

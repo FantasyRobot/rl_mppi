@@ -160,11 +160,11 @@ class TD3HRSGAAgent:
         self.noise_clip = float(noise_clip)
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         model_kwargs = dict(
-            robot_dim=11,
-            task_dim=8,
+            robot_dim=13,
+            task_dim=14,
             obstacle_dim=3,
             rr_edge_dim=8,
-            tr_edge_dim=8,
+            tr_edge_dim=14,
             or_edge_dim=5,
             hidden_dim=self.hidden_dim,
             num_heads=self.num_heads,

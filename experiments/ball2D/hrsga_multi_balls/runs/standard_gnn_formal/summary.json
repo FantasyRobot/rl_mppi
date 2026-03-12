@@ -1,0 +1,23 @@
+{
+  "run_name": "standard_gnn_formal",
+  "run_dir": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\standard_gnn_formal",
+  "best_score": 1.35,
+  "best_eval": {
+    "success_rate": 1.0,
+    "avg_completed_fraction": 1.0,
+    "avg_deadline_satisfaction": 1.0,
+    "avg_collisions": 0.0,
+    "avg_mean_task_distance": 0.0,
+    "avg_min_pair_distance": 0.6913082733246814,
+    "avg_missed_deadlines": 0.0,
+    "avg_steps": 102.4375
+  },
+  "task_rules": {
+    "enforce_visit_order": true,
+    "min_dwell_steps": 1,
+    "max_dwell_steps": 3
+  },
+  "final_epoch": 120,
+  "best_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\standard_gnn_formal\\checkpoints\\standard_gnn_ball_best.pt",
+  "latest_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\standard_gnn_formal\\checkpoints\\standard_gnn_ball_latest.pt"
+}

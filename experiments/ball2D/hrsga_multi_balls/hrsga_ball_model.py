@@ -41,6 +41,16 @@ class HRSGAExpertController:
         self.topk_task = topk_task
         self.topk_obstacle = topk_obstacle
 
+    def _task_is_assignable(self, task, agent_index):
+        if task["completed"]:
+            return False
+        servicing_agent = int(task.get("servicing_agent", -1))
+        if servicing_agent >= 0 and servicing_agent != agent_index:
+            return False
+        if float(task.get("predecessor_pending", 0.0)) > 0.5:
+            return False
+        return bool(task.get("is_available", True) or servicing_agent == agent_index)
+
     def _rr_score(self, agent, other):
         rel = vec_sub(other["pos"], agent["pos"])
         dist = max(1e-6, vec_norm(rel))
@@ -66,17 +76,26 @@ class HRSGAExpertController:
         return vec_add(vec_mul(away, strength * (1.1 + 0.95 * closing)), vec_mul(tangent, 0.55 * strength))
 
     def _tr_score(self, snapshot, agent_index, agent, task):
+        if int(task.get("servicing_agent", -1)) == agent_index:
+            return 100.0
+        if not self._task_is_assignable(task, agent_index):
+            return -1e6
         rel = vec_sub(task["pos"], agent["pos"])
         dist = max(1e-6, vec_norm(rel))
         release_slack = task["release_step"] - snapshot["step"]
         deadline_slack = task["deadline_step"] - snapshot["step"]
         assigned = 1.0 if task.get("assigned_agent", -1) == agent_index else 0.0
+        rank_bonus = 1.0 - float(task.get("visit_rank", len(snapshot["tasks"]))) / max(1.0, float(len(snapshot["tasks"])))
         release_bias = 1.1 if release_slack <= 0 else -0.08 * release_slack
         deadline_bias = 1.6 / max(6.0, deadline_slack + 6.0)
         feasibility = 1.2 / (dist + 0.35)
-        return 2.4 * assigned + release_bias + 10.0 * deadline_bias + feasibility + 0.15 * task["priority"]
+        return 2.4 * assigned + release_bias + 10.0 * deadline_bias + feasibility + 0.35 * rank_bonus + 0.15 * task["priority"]
 
     def _tr_message(self, snapshot, agent_index, agent, task):
+        if int(task.get("servicing_agent", -1)) == agent_index:
+            return (0.0, 0.0)
+        if not self._task_is_assignable(task, agent_index):
+            return (0.0, 0.0)
         rel = vec_sub(task["pos"], agent["pos"])
         dist = max(1e-6, vec_norm(rel))
         direction = vec_unit(rel)
@@ -85,15 +104,18 @@ class HRSGAExpertController:
         release_gate = 1.0 if release_wait == 0 else 0.55 / (1.0 + 0.10 * release_wait)
         deadline_slack = max(1, task["deadline_step"] - snapshot["step"])
         urgency = min(1.0, 18.0 / deadline_slack)
-        strength = assigned * release_gate * task["priority"] * (1.8 + 0.85 * urgency)
+        rank_gate = 1.15 - float(task.get("visit_rank", len(snapshot["tasks"]))) / max(1.0, 2.0 * float(len(snapshot["tasks"])))
+        strength = assigned * release_gate * task["priority"] * rank_gate * (1.8 + 0.85 * urgency)
         return vec_mul(direction, strength / (0.2 + 0.45 * dist))
 
     def _self_task_force(self, snapshot, agent_index, agent):
+        if agent.get("is_servicing", False):
+            return (0.0, 0.0)
         task_index = int(agent.get("task_id", -1))
         if task_index < 0 or task_index >= len(snapshot["tasks"]):
             return (0.0, 0.0)
         task = snapshot["tasks"][task_index]
-        if task["completed"]:
+        if task["completed"] or not self._task_is_assignable(task, agent_index):
             return (0.0, 0.0)
         rel = vec_sub(task["pos"], agent["pos"])
         direction = vec_unit(rel)
@@ -131,7 +153,7 @@ class HRSGAExpertController:
     def act(self, snapshot):
         actions = []
         for agent_index, agent in enumerate(snapshot["agents"]):
-            if agent["reached"]:
+            if agent["reached"] or agent.get("is_servicing", False):
                 actions.append((0.0, 0.0))
                 continue
 
@@ -147,7 +169,7 @@ class HRSGAExpertController:
             task_neighbors = []
             task_scores = []
             for task in snapshot["tasks"]:
-                if task["completed"]:
+                if task["completed"] or not self._task_is_assignable(task, agent_index):
                     continue
                 if pairwise_distance(agent["pos"], task["pos"]) <= self.task_radius:
                     task_neighbors.append(task)
@@ -247,10 +269,16 @@ def _resolve_reference_task(tasks, agents, agent_index, step):
     for task_index, task in enumerate(tasks):
         if task["completed"]:
             continue
+        if float(task.get("predecessor_pending", 0.0)) > 0.5:
+            continue
+        servicing_agent = int(task.get("servicing_agent", -1))
+        if servicing_agent >= 0 and servicing_agent != agent_index:
+            continue
         dist = max(1e-6, vec_norm(vec_sub(task["pos"], agent_pos)))
         release_wait = max(0, task["release_step"] - step)
         deadline_slack = max(1, task["deadline_step"] - step)
-        score = (1.8 / (0.35 + dist)) + (0.9 if release_wait == 0 else 0.35 / (1.0 + 0.12 * release_wait)) + 2.0 / (6.0 + deadline_slack)
+        remaining_dwell = float(task.get("remaining_dwell_steps", task.get("dwell_steps", 1)))
+        score = (1.8 / (0.35 + dist)) + (0.9 if release_wait == 0 else 0.35 / (1.0 + 0.12 * release_wait)) + 2.0 / (6.0 + deadline_slack) - 0.08 * remaining_dwell
         if score > fallback_score:
             fallback_index = task_index
             fallback_task = task
@@ -259,20 +287,20 @@ def _resolve_reference_task(tasks, agents, agent_index, step):
 
 
 TEMPORAL_FEATURE_SLICES = {
-    "robot_features": (6, 8),
-    "task_features": (2, 4),
-    "rr_edges": (6, 8),
-    "tr_edges": (3, 8),
+    "robot_features": [(6, 9)],
+    "task_features": [(2, 4), (11, 12)],
+    "rr_edges": [(6, 8)],
+    "tr_edges": [(3, 5), (11, 12)],
 }
 
 
 GEOMETRIC_FEATURE_SLICES = {
-    "robot_features": (0, 6),
-    "task_features": (0, 2),
-    "obstacle_features": (0, 3),
-    "rr_edges": (0, 6),
-    "tr_edges": (0, 3),
-    "or_edges": (0, 5),
+    "robot_features": [(0, 6)],
+    "task_features": [(0, 2)],
+    "obstacle_features": [(0, 3)],
+    "rr_edges": [(0, 6)],
+    "tr_edges": [(0, 3)],
+    "or_edges": [(0, 5)],
 }
 
 
@@ -291,9 +319,9 @@ def apply_feature_ablation(batch_or_sample, disable_temporal_bias=False, disable
     for key, value in batch_or_sample.items():
         slices = []
         if disable_temporal_bias and key in TEMPORAL_FEATURE_SLICES:
-            slices.append(TEMPORAL_FEATURE_SLICES[key])
+            slices.extend(TEMPORAL_FEATURE_SLICES[key])
         if disable_geometric_bias and key in GEOMETRIC_FEATURE_SLICES:
-            slices.append(GEOMETRIC_FEATURE_SLICES[key])
+            slices.extend(GEOMETRIC_FEATURE_SLICES[key])
         transformed[key] = _zero_feature_slices(value, slices) if slices else value
     return transformed
 
@@ -310,11 +338,11 @@ def snapshot_to_sample(snapshot, max_steps, action_targets):
     num_obstacles = len(obstacles)
     speed_scale = 1.5
 
-    robot_features = np.zeros((num_agents, 11), dtype=np.float32)
-    task_features = np.zeros((num_tasks, 8), dtype=np.float32)
+    robot_features = np.zeros((num_agents, 13), dtype=np.float32)
+    task_features = np.zeros((num_tasks, 14), dtype=np.float32)
     obstacle_features = np.zeros((num_obstacles, 3), dtype=np.float32)
     rr_edges = np.zeros((num_agents, num_agents, 8), dtype=np.float32)
-    tr_edges = np.zeros((num_agents, num_tasks, 8), dtype=np.float32)
+    tr_edges = np.zeros((num_agents, num_tasks, 14), dtype=np.float32)
     or_edges = np.zeros((num_agents, num_obstacles, 5), dtype=np.float32)
     rr_mask = np.zeros((num_agents, num_agents), dtype=bool)
     tr_mask = np.zeros((num_agents, num_tasks), dtype=bool)
@@ -325,6 +353,12 @@ def snapshot_to_sample(snapshot, max_steps, action_targets):
         release_slack = task["release_step"] - step
         deadline_slack = task["deadline_step"] - step
         nearest_agent_distance = min(pairwise_distance(agent["pos"], task["pos"]) for agent in agents) if agents else 0.0
+        visit_rank = float(task.get("visit_rank", task_index + 1))
+        predecessor_pending = float(task.get("predecessor_pending", 0.0))
+        dwell_steps = float(task.get("dwell_steps", 1))
+        remaining_dwell = float(task.get("remaining_dwell_steps", dwell_steps))
+        is_servicing = float(task.get("servicing_agent", -1) >= 0)
+        is_available = float(task.get("is_available", not task["completed"]))
         task_features[task_index] = np.array(
             [
                 _signed_clip(task["pos"][0], world_size),
@@ -335,6 +369,12 @@ def snapshot_to_sample(snapshot, max_steps, action_targets):
                 float(task["completed"]),
                 float(release_slack <= 0),
                 _positive_clip(nearest_agent_distance, world_size),
+                _positive_clip(visit_rank, max(1, num_tasks)),
+                predecessor_pending,
+                _positive_clip(dwell_steps, max_steps),
+                _positive_clip(remaining_dwell, max_steps),
+                is_servicing,
+                is_available,
             ],
             dtype=np.float32,
         )
@@ -354,15 +394,19 @@ def snapshot_to_sample(snapshot, max_steps, action_targets):
         if reference_task is not None:
             release_slack = reference_task["release_step"] - step
             deadline_slack = reference_task["deadline_step"] - step
+            remaining_dwell = float(reference_task.get("remaining_dwell_steps", reference_task.get("dwell_steps", 1)))
+            predecessor_pending = float(reference_task.get("predecessor_pending", 0.0))
             task_rel = vec_sub(reference_task["pos"], agent["pos"])
             task_distance = vec_norm(task_rel)
         else:
             release_slack = max_steps
             deadline_slack = max_steps
+            remaining_dwell = 0.0
+            predecessor_pending = 0.0
             task_rel = (0.0, 0.0)
             task_distance = world_size
         remaining_fraction = sum(float(not task["completed"]) for task in tasks) / max(1, num_tasks)
-        active_mask[agent_index] = True
+        active_mask[agent_index] = int(agent.get("task_id", -1)) >= 0 or int(agent.get("service_task_id", -1)) >= 0
         robot_features[agent_index] = np.array(
             [
                 _signed_clip(agent["pos"][0], world_size),
@@ -373,6 +417,8 @@ def snapshot_to_sample(snapshot, max_steps, action_targets):
                 _signed_clip(task_rel[1], world_size),
                 _signed_clip(release_slack, max_steps),
                 _signed_clip(deadline_slack, max_steps),
+                _positive_clip(remaining_dwell, max_steps),
+                predecessor_pending,
                 float(remaining_fraction),
                 _positive_clip(task_distance, world_size),
                 1.0,
@@ -417,6 +463,8 @@ def snapshot_to_sample(snapshot, max_steps, action_targets):
             dist = vec_norm(rel)
             release_slack = task["release_step"] - step
             deadline_slack = task["deadline_step"] - step
+            predecessor_pending = float(task.get("predecessor_pending", 0.0))
+            remaining_dwell = float(task.get("remaining_dwell_steps", task.get("dwell_steps", 1)))
             tr_mask[agent_index, task_index] = True
             tr_edges[agent_index, task_index] = np.array(
                 [
@@ -428,6 +476,12 @@ def snapshot_to_sample(snapshot, max_steps, action_targets):
                     float(task.get("assigned_agent", -1) == agent_index),
                     float(task["priority"]),
                     float(release_slack <= 0),
+                    _positive_clip(float(task.get("visit_rank", task_index + 1)), max(1, num_tasks)),
+                    predecessor_pending,
+                    _positive_clip(float(task.get("dwell_steps", 1)), max_steps),
+                    _positive_clip(remaining_dwell, max_steps),
+                    float(task.get("servicing_agent", -1) == agent_index),
+                    float(task.get("is_available", True)),
                 ],
                 dtype=np.float32,
             )
@@ -581,6 +635,28 @@ def _remap_legacy_policy_state_dict(state_dict):
         else:
             remapped[key] = value
     return remapped
+
+
+def _adapt_state_dict_for_model(model_state, checkpoint_state):
+    adapted = dict(model_state)
+    for key, value in checkpoint_state.items():
+        if key not in adapted:
+            continue
+        target = adapted[key]
+        if target.shape == value.shape:
+            adapted[key] = value
+            continue
+        if target.ndim != value.ndim:
+            continue
+        if any(target.shape[index] != value.shape[index] for index in range(target.ndim - 1)):
+            continue
+        if target.shape[-1] < value.shape[-1]:
+            continue
+        patched = target.clone()
+        slices = tuple(slice(0, value.shape[index]) for index in range(value.ndim))
+        patched[slices] = value
+        adapted[key] = patched
+    return adapted
 
 
 class MLP(nn.Module):
@@ -872,11 +948,11 @@ class HRSGABallAgent:
         self.use_dense_residual = bool(use_dense_residual)
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.model = HRSGAPolicyNetwork(
-            robot_dim=11,
-            task_dim=8,
+            robot_dim=13,
+            task_dim=14,
             obstacle_dim=3,
             rr_edge_dim=8,
-            tr_edge_dim=8,
+            tr_edge_dim=14,
             or_edge_dim=5,
             hidden_dim=self.hidden_dim,
             num_heads=self.num_heads,
@@ -944,7 +1020,8 @@ class HRSGABallAgent:
     def load(self, path, optimizer=None):
         checkpoint = torch.load(path, map_location=self.device)
         model_state = _remap_legacy_policy_state_dict(checkpoint["model_state"])
-        self.model.load_state_dict(model_state)
+        adapted_state = _adapt_state_dict_for_model(self.model.state_dict(), model_state)
+        self.model.load_state_dict(adapted_state)
         if optimizer is not None and "optimizer_state" in checkpoint:
             optimizer.load_state_dict(checkpoint["optimizer_state"])
         return {
@@ -971,7 +1048,8 @@ def load_agent_from_checkpoint(path, device=None):
         device=device,
     )
     model_state = _remap_legacy_policy_state_dict(checkpoint["model_state"])
-    agent.model.load_state_dict(model_state)
+    adapted_state = _adapt_state_dict_for_model(agent.model.state_dict(), model_state)
+    agent.model.load_state_dict(adapted_state)
     agent.model.eval()
     return agent
 

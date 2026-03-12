@@ -1,0 +1,860 @@
+{
+  "left": {
+    "label": "HRSGA",
+    "summary": {
+      "model_type": "hrsga",
+      "model_path": "models/hrsga_ball_best.pt",
+      "layout_mode": "representative",
+      "strict_collision_stop": true,
+      "task_rules": {
+        "visit_order_mode": "ranked",
+        "min_dwell_steps": 1,
+        "max_dwell_steps": 3
+      },
+      "num_tests": 20,
+      "success_rate": 0.0,
+      "avg_completed_tasks": 6.25,
+      "avg_completed_fraction": 0.78125,
+      "avg_deadline_satisfaction": 0.53125,
+      "avg_collisions": 0.0,
+      "avg_mean_task_distance": 1.5277498359910475,
+      "avg_min_pair_distance": 2.612618717645694,
+      "avg_missed_deadlines": 1.75,
+      "avg_steps": 180.0,
+      "collision_stop_rate": 0.0,
+      "avg_inference_ms": 3.6391792499630866,
+      "p95_inference_ms": 5.8259014999748615
+    },
+    "runs": [
+      {
+        "seed": 5300,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.1270231942202282,
+        "min_pair_distance": 2.6580484684259336,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.4827133334248277,
+        "p95_inference_ms": 5.492900003446266,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5301,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.0546275583730358,
+        "min_pair_distance": 2.4724273487094597,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.268572221956371,
+        "p95_inference_ms": 5.6400949968519845,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5302,
+        "success": false,
+        "completed_tasks": 7,
+        "completed_fraction": 0.875,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.220403023363525,
+        "min_pair_distance": 2.412775340924013,
+        "missed_deadlines": 1,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 4.078865000054874,
+        "p95_inference_ms": 5.686814999353373,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5303,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.625,
+        "collisions": 0,
+        "mean_task_distance": 2.708945568007401,
+        "min_pair_distance": 2.90722371252337,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.4603483330202938,
+        "p95_inference_ms": 5.546874999345163,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5304,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.1270231942202282,
+        "min_pair_distance": 2.6580484684259336,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.5284772223854413,
+        "p95_inference_ms": 5.6027849972451795,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5305,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.0546275583730358,
+        "min_pair_distance": 2.4724273487094597,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.532400555559434,
+        "p95_inference_ms": 5.555460004688938,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5306,
+        "success": false,
+        "completed_tasks": 7,
+        "completed_fraction": 0.875,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.220403023363525,
+        "min_pair_distance": 2.412775340924013,
+        "missed_deadlines": 1,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.424152222416726,
+        "p95_inference_ms": 5.547339995246148,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5307,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.625,
+        "collisions": 0,
+        "mean_task_distance": 2.708945568007401,
+        "min_pair_distance": 2.90722371252337,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.2899944444781997,
+        "p95_inference_ms": 5.667445000653969,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5308,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.1270231942202282,
+        "min_pair_distance": 2.6580484684259336,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.0160405551416463,
+        "p95_inference_ms": 5.387299995345529,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5309,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.0546275583730358,
+        "min_pair_distance": 2.4724273487094597,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.301785000359006,
+        "p95_inference_ms": 5.463980005515622,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5310,
+        "success": false,
+        "completed_tasks": 7,
+        "completed_fraction": 0.875,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.220403023363525,
+        "min_pair_distance": 2.412775340924013,
+        "missed_deadlines": 1,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.4289000001687477,
+        "p95_inference_ms": 5.402535004395759,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5311,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.625,
+        "collisions": 0,
+        "mean_task_distance": 2.708945568007401,
+        "min_pair_distance": 2.90722371252337,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 4.015516110666795,
+        "p95_inference_ms": 5.994609996923828,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5312,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.1270231942202282,
+        "min_pair_distance": 2.6580484684259336,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.198176111173881,
+        "p95_inference_ms": 5.266405001384555,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5313,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.0546275583730358,
+        "min_pair_distance": 2.4724273487094597,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.5095555550975,
+        "p95_inference_ms": 5.555799997091525,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5314,
+        "success": false,
+        "completed_tasks": 7,
+        "completed_fraction": 0.875,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.220403023363525,
+        "min_pair_distance": 2.412775340924013,
+        "missed_deadlines": 1,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.260522777782171,
+        "p95_inference_ms": 5.567989997507539,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5315,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.625,
+        "collisions": 0,
+        "mean_task_distance": 2.708945568007401,
+        "min_pair_distance": 2.90722371252337,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 4.268234999754997,
+        "p95_inference_ms": 6.259939996016328,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5316,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.1270231942202282,
+        "min_pair_distance": 2.6580484684259336,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 4.767053333489457,
+        "p95_inference_ms": 7.473095003297203,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5317,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.0546275583730358,
+        "min_pair_distance": 2.4724273487094597,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 3.7303055556549225,
+        "p95_inference_ms": 5.84653999976581,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5318,
+        "success": false,
+        "completed_tasks": 7,
+        "completed_fraction": 0.875,
+        "deadline_satisfaction": 0.5,
+        "collisions": 0,
+        "mean_task_distance": 1.220403023363525,
+        "min_pair_distance": 2.412775340924013,
+        "missed_deadlines": 1,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 4.075603333330946,
+        "p95_inference_ms": 6.729955002811037,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5319,
+        "success": false,
+        "completed_tasks": 6,
+        "completed_fraction": 0.75,
+        "deadline_satisfaction": 0.625,
+        "collisions": 0,
+        "mean_task_distance": 2.708945568007401,
+        "min_pair_distance": 2.90722371252337,
+        "missed_deadlines": 2,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 4.146368333345486,
+        "p95_inference_ms": 6.830165002611466,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      }
+    ]
+  },
+  "right": {
+    "label": "Standard GNN",
+    "summary": {
+      "model_type": "standard_gnn",
+      "model_path": "models/standard_gnn_ball_best.pt",
+      "layout_mode": "representative",
+      "strict_collision_stop": true,
+      "task_rules": {
+        "visit_order_mode": "ranked",
+        "min_dwell_steps": 1,
+        "max_dwell_steps": 3
+      },
+      "num_tests": 20,
+      "success_rate": 0.0,
+      "avg_completed_tasks": 0.75,
+      "avg_completed_fraction": 0.09375,
+      "avg_deadline_satisfaction": 0.09375,
+      "avg_collisions": 0.25,
+      "avg_mean_task_distance": 3.886184329383306,
+      "avg_min_pair_distance": 0.9212658065186667,
+      "avg_missed_deadlines": 5.25,
+      "avg_steps": 164.5,
+      "collision_stop_rate": 0.25,
+      "avg_inference_ms": 2.1153976266537198,
+      "p95_inference_ms": 3.211444250027853
+    },
+    "runs": [
+      {
+        "seed": 5300,
+        "success": false,
+        "completed_tasks": 2,
+        "completed_fraction": 0.25,
+        "deadline_satisfaction": 0.25,
+        "collisions": 0,
+        "mean_task_distance": 1.3070682027371519,
+        "min_pair_distance": 1.3828007218745424,
+        "missed_deadlines": 6,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 2.1148088888164946,
+        "p95_inference_ms": 3.1083399971976178,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5301,
+        "success": false,
+        "completed_tasks": 0,
+        "completed_fraction": 0.0,
+        "deadline_satisfaction": 0.0,
+        "collisions": 1,
+        "mean_task_distance": 5.441431340588516,
+        "min_pair_distance": 0.32720006094531257,
+        "missed_deadlines": 0,
+        "steps": 118,
+        "collision_terminated": true,
+        "avg_inference_ms": 1.823294067311878,
+        "p95_inference_ms": 3.148889997464721,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5302,
+        "success": false,
+        "completed_tasks": 0,
+        "completed_fraction": 0.0,
+        "deadline_satisfaction": 0.0,
+        "collisions": 0,
+        "mean_task_distance": 4.120964901083528,
+        "min_pair_distance": 1.1262297183736174,
+        "missed_deadlines": 8,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 2.127111111096585,
+        "p95_inference_ms": 3.293384996140958,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5303,
+        "success": false,
+        "completed_tasks": 1,
+        "completed_fraction": 0.125,
+        "deadline_satisfaction": 0.125,
+        "collisions": 0,
+        "mean_task_distance": 4.6752728731240305,
+        "min_pair_distance": 0.848832724881195,
+        "missed_deadlines": 7,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 1.888804999705624,
+        "p95_inference_ms": 3.0742099948838586,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5304,
+        "success": false,
+        "completed_tasks": 2,
+        "completed_fraction": 0.25,
+        "deadline_satisfaction": 0.25,
+        "collisions": 0,
+        "mean_task_distance": 1.3070682027371519,
+        "min_pair_distance": 1.3828007218745424,
+        "missed_deadlines": 6,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 2.3877816667259646,
+        "p95_inference_ms": 3.174665001279209,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5305,
+        "success": false,
+        "completed_tasks": 0,
+        "completed_fraction": 0.0,
+        "deadline_satisfaction": 0.0,
+        "collisions": 1,
+        "mean_task_distance": 5.441431340588516,
+        "min_pair_distance": 0.32720006094531257,
+        "missed_deadlines": 0,
+        "steps": 118,
+        "collision_terminated": true,
+        "avg_inference_ms": 2.0430135596528753,
+        "p95_inference_ms": 3.2376150018535554,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5306,
+        "success": false,
+        "completed_tasks": 0,
+        "completed_fraction": 0.0,
+        "deadline_satisfaction": 0.0,
+        "collisions": 0,
+        "mean_task_distance": 4.120964901083528,
+        "min_pair_distance": 1.1262297183736174,
+        "missed_deadlines": 8,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 2.352722222874743,
+        "p95_inference_ms": 3.1931249977787957,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5307,
+        "success": false,
+        "completed_tasks": 1,
+        "completed_fraction": 0.125,
+        "deadline_satisfaction": 0.125,
+        "collisions": 0,
+        "mean_task_distance": 4.6752728731240305,
+        "min_pair_distance": 0.848832724881195,
+        "missed_deadlines": 7,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 2.3145772222051164,
+        "p95_inference_ms": 3.211919999375823,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5308,
+        "success": false,
+        "completed_tasks": 2,
+        "completed_fraction": 0.25,
+        "deadline_satisfaction": 0.25,
+        "collisions": 0,
+        "mean_task_distance": 1.3070682027371519,
+        "min_pair_distance": 1.3828007218745424,
+        "missed_deadlines": 6,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 1.592161111329915,
+        "p95_inference_ms": 1.892330004193353,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5309,
+        "success": false,
+        "completed_tasks": 0,
+        "completed_fraction": 0.0,
+        "deadline_satisfaction": 0.0,
+        "collisions": 1,
+        "mean_task_distance": 5.441431340588516,
+        "min_pair_distance": 0.32720006094531257,
+        "missed_deadlines": 0,
+        "steps": 118,
+        "collision_terminated": true,
+        "avg_inference_ms": 2.068012711834715,
+        "p95_inference_ms": 3.326379995633033,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5310,
+        "success": false,
+        "completed_tasks": 0,
+        "completed_fraction": 0.0,
+        "deadline_satisfaction": 0.0,
+        "collisions": 0,
+        "mean_task_distance": 4.120964901083528,
+        "min_pair_distance": 1.1262297183736174,
+        "missed_deadlines": 8,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 2.51666777787452,
+        "p95_inference_ms": 3.2967300056043314,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5311,
+        "success": false,
+        "completed_tasks": 1,
+        "completed_fraction": 0.125,
+        "deadline_satisfaction": 0.125,
+        "collisions": 0,
+        "mean_task_distance": 4.6752728731240305,
+        "min_pair_distance": 0.848832724881195,
+        "missed_deadlines": 7,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 1.9717022220801381,
+        "p95_inference_ms": 3.203290000965353,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5312,
+        "success": false,
+        "completed_tasks": 2,
+        "completed_fraction": 0.25,
+        "deadline_satisfaction": 0.25,
+        "collisions": 0,
+        "mean_task_distance": 1.3070682027371519,
+        "min_pair_distance": 1.3828007218745424,
+        "missed_deadlines": 6,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 1.8240588890977152,
+        "p95_inference_ms": 3.0615200023021316,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5313,
+        "success": false,
+        "completed_tasks": 0,
+        "completed_fraction": 0.0,
+        "deadline_satisfaction": 0.0,
+        "collisions": 1,
+        "mean_task_distance": 5.441431340588516,
+        "min_pair_distance": 0.32720006094531257,
+        "missed_deadlines": 0,
+        "steps": 118,
+        "collision_terminated": true,
+        "avg_inference_ms": 1.7856788140538118,
+        "p95_inference_ms": 3.1573200005368562,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5314,
+        "success": false,
+        "completed_tasks": 0,
+        "completed_fraction": 0.0,
+        "deadline_satisfaction": 0.0,
+        "collisions": 0,
+        "mean_task_distance": 4.120964901083528,
+        "min_pair_distance": 1.1262297183736174,
+        "missed_deadlines": 8,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 2.0446433332836023,
+        "p95_inference_ms": 3.37234000544413,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5315,
+        "success": false,
+        "completed_tasks": 1,
+        "completed_fraction": 0.125,
+        "deadline_satisfaction": 0.125,
+        "collisions": 0,
+        "mean_task_distance": 4.6752728731240305,
+        "min_pair_distance": 0.848832724881195,
+        "missed_deadlines": 7,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 2.4335555553180814,
+        "p95_inference_ms": 3.7522149981668904,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5316,
+        "success": false,
+        "completed_tasks": 2,
+        "completed_fraction": 0.25,
+        "deadline_satisfaction": 0.25,
+        "collisions": 0,
+        "mean_task_distance": 1.3070682027371519,
+        "min_pair_distance": 1.3828007218745424,
+        "missed_deadlines": 6,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 2.2279638884760464,
+        "p95_inference_ms": 3.4591650019137883,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5317,
+        "success": false,
+        "completed_tasks": 0,
+        "completed_fraction": 0.0,
+        "deadline_satisfaction": 0.0,
+        "collisions": 1,
+        "mean_task_distance": 5.441431340588516,
+        "min_pair_distance": 0.32720006094531257,
+        "missed_deadlines": 0,
+        "steps": 118,
+        "collision_terminated": true,
+        "avg_inference_ms": 2.162519491598764,
+        "p95_inference_ms": 2.976785003920667,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5318,
+        "success": false,
+        "completed_tasks": 0,
+        "completed_fraction": 0.0,
+        "deadline_satisfaction": 0.0,
+        "collisions": 0,
+        "mean_task_distance": 4.120964901083528,
+        "min_pair_distance": 1.1262297183736174,
+        "missed_deadlines": 8,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 2.348185555416017,
+        "p95_inference_ms": 3.704150000703521,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      },
+      {
+        "seed": 5319,
+        "success": false,
+        "completed_tasks": 1,
+        "completed_fraction": 0.125,
+        "deadline_satisfaction": 0.125,
+        "collisions": 0,
+        "mean_task_distance": 4.6752728731240305,
+        "min_pair_distance": 0.848832724881195,
+        "missed_deadlines": 7,
+        "steps": 180,
+        "collision_terminated": false,
+        "avg_inference_ms": 2.280689444321777,
+        "p95_inference_ms": 3.584509995198459,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        }
+      }
+    ]
+  }
+}

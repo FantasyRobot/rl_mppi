@@ -1,0 +1,123 @@
+{
+  "layout_mode": "representative",
+  "num_tests": 4,
+  "seed_start": 5300,
+  "task_rules": {
+    "visit_order_mode": "ranked",
+    "enforce_visit_order": true,
+    "min_dwell_steps": 1,
+    "max_dwell_steps": 3
+  },
+  "hrsga_model_path": "models/hrsga_ball_best.pt",
+  "gnn_model_path": "models/standard_gnn_ball_best.pt",
+  "plot_path": "runs/benchmarks/compare_trained_gnn_hrsga_2r4t.png",
+  "task_label_mode": "ranked",
+  "task_metadata": [
+    {
+      "index": 0,
+      "pos": [
+        -3.15,
+        -1.6
+      ],
+      "visit_rank": 1,
+      "dwell_steps": 1
+    },
+    {
+      "index": 1,
+      "pos": [
+        -3.15,
+        1.6
+      ],
+      "visit_rank": 2,
+      "dwell_steps": 2
+    },
+    {
+      "index": 2,
+      "pos": [
+        -1.55,
+        -2.15
+      ],
+      "visit_rank": 3,
+      "dwell_steps": 3
+    },
+    {
+      "index": 3,
+      "pos": [
+        -1.55,
+        2.15
+      ],
+      "visit_rank": 4,
+      "dwell_steps": 1
+    }
+  ],
+  "runs": [
+    {
+      "seed": 5300,
+      "standard_gnn": {
+        "success": false,
+        "completed_tasks": 1,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 0.25
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 0.75
+      }
+    },
+    {
+      "seed": 5301,
+      "standard_gnn": {
+        "success": false,
+        "completed_tasks": 0,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 0.0
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 0.75
+      }
+    },
+    {
+      "seed": 5302,
+      "standard_gnn": {
+        "success": false,
+        "completed_tasks": 0,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 0.0
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      }
+    },
+    {
+      "seed": 5303,
+      "standard_gnn": {
+        "success": false,
+        "completed_tasks": 2,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 0.5
+      },
+      "hrsga": {
+        "success": true,
+        "completed_tasks": 4,
+        "collisions": 0,
+        "collision_stop": false,
+        "deadline_satisfaction": 1.0
+      }
+    }
+  ]
+}

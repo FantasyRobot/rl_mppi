@@ -18,15 +18,15 @@
     </style>
   </defs>
 
-  <text x="44" y="48" class="title">HRSGA Overall Architecture</text>
-  <text x="44" y="76" class="small">Robot-task-obstacle heterogeneous graph, relation-aware sparse attention, robot-centric fusion, and actor-critic decision heads.</text>
+  <text x="44" y="48" class="title">HRSGA 总体结构</text>
+  <text x="44" y="76" class="small">机器人-任务-障碍物异质图、关系类型感知稀疏注意力、两阶段机器人中心式融合，以及策略头与可选价值扩展。</text>
 
   <rect x="60" y="112" width="220" height="540" class="group" />
-  <text x="132" y="144" class="group-title">Input</text>
+  <text x="132" y="144" class="group-title">输入层</text>
 
   <rect x="92" y="188" width="156" height="74" class="input" />
   <text x="132" y="220" class="node-text">环境状态</text>
-  <text x="112" y="246" class="small">Robot / Task / Obstacle</text>
+  <text x="112" y="246" class="small">机器人 / 任务 / 障碍物</text>
 
   <rect x="92" y="338" width="156" height="104" class="input" />
   <text x="122" y="372" class="node-text">异质图构建</text>
@@ -34,7 +34,7 @@
   <text x="112" y="426" class="small">边: E<tspan baseline-shift="sub" font-size="12">rr</tspan>, E<tspan baseline-shift="sub" font-size="12">tr</tspan>, E<tspan baseline-shift="sub" font-size="12">or</tspan></text>
 
   <rect x="328" y="112" width="252" height="540" class="group" />
-  <text x="398" y="144" class="group-title">特征编码层</text>
+  <text x="398" y="144" class="group-title">类型特定编码层</text>
 
   <rect x="374" y="188" width="160" height="74" class="encode" />
   <text x="404" y="232" class="node-text">机器人编码器 E<tspan baseline-shift="sub" font-size="12">r</tspan></text>
@@ -49,37 +49,41 @@
   <text x="710" y="144" class="group-title">关系建模层</text>
 
   <rect x="674" y="170" width="202" height="78" class="attend" />
-  <text x="706" y="204" class="node-text">异质关系多头注意力</text>
-  <text x="688" y="228" class="small">Robot-Robot / Task-Robot / Obstacle-Robot</text>
+  <text x="712" y="198" class="node-text">关系类型感知</text>
+  <text x="720" y="220" class="node-text">多头注意力</text>
+  <text x="678" y="228" class="small">机器人-机器人 / 任务-机器人 / 障碍-机器人</text>
 
   <rect x="674" y="286" width="202" height="86" class="attend" />
-  <text x="706" y="320" class="node-text">几何与时序双偏置打分</text>
-  <text x="690" y="346" class="small">相对位姿 / 可达性 / 时间窗 / 冲突窗口</text>
+  <text x="698" y="320" class="node-text">几何与时序联合边偏置</text>
+  <text x="682" y="346" class="small">相对位姿 / 可达性 / 释放-截止 / 冲突时间差</text>
 
   <rect x="674" y="412" width="202" height="74" class="attend" />
-  <text x="722" y="456" class="node-text">Top-K 稀疏边选择</text>
+  <text x="724" y="448" class="node-text">关系内 Top-K</text>
+  <text x="722" y="470" class="node-text">稀疏边筛选</text>
 
   <rect x="674" y="526" width="202" height="74" class="attend" />
-  <text x="722" y="570" class="node-text">分关系消息聚合</text>
+  <text x="706" y="570" class="node-text">分关系消息聚合</text>
 
   <rect x="970" y="112" width="252" height="540" class="group" />
   <text x="1052" y="144" class="group-title">决策层</text>
 
   <rect x="1016" y="188" width="160" height="90" class="decision" />
-  <text x="1040" y="220" class="node-text">机器人中心式融合更新</text>
-  <text x="1040" y="246" class="small">Global Context +</text>
-  <text x="1048" y="268" class="small">Gated Residual</text>
+  <text x="1028" y="220" class="node-text">两阶段机器人中心式融合</text>
+  <text x="1040" y="246" class="small">局部可行性 → 全局协调</text>
+  <text x="1044" y="268" class="small">可选稠密残差分支</text>
 
   <rect x="1016" y="340" width="160" height="74" class="decision" />
-  <text x="1060" y="372" class="node-text">策略头 Actor</text>
-  <text x="1052" y="398" class="small">输出联合动作</text>
+  <text x="1048" y="372" class="node-text">策略头（主实验）</text>
+  <text x="1052" y="398" class="small">输出多机器人联合动作</text>
 
   <rect x="1016" y="468" width="160" height="74" class="decision" />
-  <text x="1060" y="500" class="node-text">价值头 Critic</text>
-  <text x="1048" y="526" class="small">评估状态动作价值</text>
+  <text x="1052" y="492" class="node-text">价值头</text>
+  <text x="1030" y="514" class="small">可选 RL 扩展</text>
+  <text x="1044" y="526" class="small">评估状态-动作价值</text>
 
   <rect x="1016" y="594" width="160" height="44" class="output" />
-  <text x="1048" y="622" class="node-text">多机器人联合动作 / Q 值</text>
+  <text x="1064" y="614" class="small">联合动作 /</text>
+  <text x="1040" y="632" class="small">状态-动作价值</text>
 
   <path d="M170 262 L170 338" class="arrow" />
 

@@ -1,0 +1,28 @@
+{
+  "run_name": "hrsga_dense",
+  "run_dir": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\hrsga_dense",
+  "best_score": 1.35,
+  "best_eval": {
+    "success_rate": 1.0,
+    "avg_completed_fraction": 1.0,
+    "avg_deadline_satisfaction": 1.0,
+    "avg_collisions": 0.0,
+    "avg_mean_task_distance": 0.0,
+    "avg_min_pair_distance": 1.490954748002306,
+    "avg_missed_deadlines": 0.0,
+    "avg_steps": 113.25,
+    "collision_stop_rate": 0.0
+  },
+  "task_rules": {
+    "enforce_visit_order": true,
+    "min_dwell_steps": 1,
+    "max_dwell_steps": 3
+  },
+  "final_epoch": 120,
+  "config_path": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\hrsga_dense\\config.json",
+  "metrics_path": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\hrsga_dense\\logs\\metrics.jsonl",
+  "best_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\hrsga_dense\\checkpoints\\hrsga_ball_best.pt",
+  "latest_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\runs\\hrsga_dense\\checkpoints\\hrsga_ball_latest.pt",
+  "canonical_best_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\models\\hrsga_ball_best.pt",
+  "canonical_latest_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_multi_balls\\models\\hrsga_ball_latest.pt"
+}

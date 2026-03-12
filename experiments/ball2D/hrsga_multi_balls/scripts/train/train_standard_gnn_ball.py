@@ -13,6 +13,7 @@ ROOT_DIR = os.path.dirname(SCRIPTS_DIR)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
+from envball_hrsga import HRSGABallEnvironment
 from hrsga_ball_model import build_behavior_dataset, compute_action_loss, iterate_minibatches
 from standard_gnn_ball_model import StandardGNNBallAgent, evaluate_agent
 
@@ -78,6 +79,8 @@ def _apply_config_overrides(args, parser, argv):
         return args
     with open(args.config_path, "r", encoding="utf-8") as handle:
         config = json.load(handle)
+    if isinstance(config, dict) and isinstance(config.get("config"), dict):
+        config = config["config"]
     valid_dests = {action.dest for action in parser._actions}
     explicit_keys = _explicit_cli_keys(argv)
     for key, value in config.items():
@@ -85,6 +88,11 @@ def _apply_config_overrides(args, parser, argv):
             continue
         setattr(args, key, value)
     return args
+
+
+def _task_rule_config(num_balls, num_tasks, max_steps):
+    env = HRSGABallEnvironment(num_balls=num_balls, num_tasks=num_tasks, max_steps=max_steps)
+    return env.task_rule_config()
 
 
 def _split_dataset(dataset, train_ratio):
@@ -144,6 +152,7 @@ def train(
         f"[DATA] train_samples={train_dataset.robot_features.shape[0]} val_samples={val_dataset.robot_features.shape[0]} "
         f"expert_stats={_dataset_summary(episode_stats)} run_dir={run_paths['run_dir']}"
     )
+    task_rules = _task_rule_config(num_balls=num_balls, num_tasks=num_tasks, max_steps=max_steps)
 
     _save_json(
         run_paths["config_path"],
@@ -167,7 +176,8 @@ def train(
                 "seed": seed,
                 "run_name": run_paths["run_name"],
                 "output_root": output_root,
-            }
+            },
+            "task_rules": task_rules,
         },
     )
 
@@ -243,6 +253,7 @@ def train(
             "run_dir": run_paths["run_dir"],
             "best_score": float(best_score),
             "best_eval": best_eval_metrics,
+            "task_rules": task_rules,
             "final_epoch": int(start_epoch + epochs),
             "best_checkpoint": run_paths["best_path"],
             "latest_checkpoint": run_paths["latest_path"],

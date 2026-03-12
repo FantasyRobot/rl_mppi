@@ -1,0 +1,120 @@
+{"epoch": 1, "train_loss": 0.26341272696080453, "val_loss": 0.18799247503990218}
+{"epoch": 2, "train_loss": 0.1567025957003436, "val_loss": 0.14526710520897593}
+{"epoch": 3, "train_loss": 0.13700266515625187, "val_loss": 0.15041121995697418}
+{"epoch": 4, "train_loss": 0.13176335424413607, "val_loss": 0.13496004942183693}
+{"epoch": 5, "train_loss": 0.12749633501907687, "val_loss": 0.1366063725979378, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.09375, "avg_deadline_satisfaction": 0.09375, "avg_collisions": 0.75, "avg_mean_task_distance": 2.283502248763502, "avg_min_pair_distance": 0.41979299759187716, "avg_missed_deadlines": 2.75, "avg_steps": 112.25, "collision_stop_rate": 0.75}, "selection_score": -0.22968750000000002, "best_updated": true}
+{"epoch": 6, "train_loss": 0.1254575547767578, "val_loss": 0.134957159660934}
+{"epoch": 7, "train_loss": 0.12219701515735912, "val_loss": 0.1343755473382771}
+{"epoch": 8, "train_loss": 0.1185313720620754, "val_loss": 0.13426884096781058}
+{"epoch": 9, "train_loss": 0.11581269678107378, "val_loss": 0.13899024515634492}
+{"epoch": 10, "train_loss": 0.11203532894776558, "val_loss": 0.13869917750292057, "eval": {"success_rate": 0.25, "avg_completed_fraction": 0.25, "avg_deadline_satisfaction": 0.25, "avg_collisions": 0.5, "avg_mean_task_distance": 2.171201901041373, "avg_min_pair_distance": 0.7136248665329322, "avg_missed_deadlines": 2.0, "avg_steps": 85.75, "collision_stop_rate": 0.5}, "selection_score": 0.16250000000000003, "best_updated": true}
+{"epoch": 11, "train_loss": 0.10811660124164167, "val_loss": 0.1404616393326294}
+{"epoch": 12, "train_loss": 0.10449422991006938, "val_loss": 0.1453167267454167}
+{"epoch": 13, "train_loss": 0.10100390266577021, "val_loss": 0.14811125947605996}
+{"epoch": 14, "train_loss": 0.09781202165527902, "val_loss": 0.1515557504835583}
+{"epoch": 15, "train_loss": 0.09466654128053596, "val_loss": 0.15843299398464816, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.09375, "avg_deadline_satisfaction": 0.09375, "avg_collisions": 0.25, "avg_mean_task_distance": 2.919640532080858, "avg_min_pair_distance": 0.7440259066693444, "avg_missed_deadlines": 5.25, "avg_steps": 142.25, "collision_stop_rate": 0.25}, "selection_score": -0.05468750000000001}
+{"epoch": 16, "train_loss": 0.0926584036101993, "val_loss": 0.15801289927524825}
+{"epoch": 17, "train_loss": 0.08977987371284994, "val_loss": 0.16018766408475738}
+{"epoch": 18, "train_loss": 0.08713191400877345, "val_loss": 0.1548955085798211}
+{"epoch": 19, "train_loss": 0.08391384365691333, "val_loss": 0.16231757895743829}
+{"epoch": 20, "train_loss": 0.08302209513429945, "val_loss": 0.16522820724972656, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.09375, "avg_deadline_satisfaction": 0.09375, "avg_collisions": 1.25, "avg_mean_task_distance": 3.017542450700624, "avg_min_pair_distance": 0.3354415818445947, "avg_missed_deadlines": 2.0, "avg_steps": 106.5, "collision_stop_rate": 1.0}, "selection_score": -0.3421875}
+{"epoch": 21, "train_loss": 0.07971797411592817, "val_loss": 0.1621998453789967}
+{"epoch": 22, "train_loss": 0.07655425740123481, "val_loss": 0.1669388541796555}
+{"epoch": 23, "train_loss": 0.07418854419149158, "val_loss": 0.1730799624496805}
+{"epoch": 24, "train_loss": 0.07206548326389574, "val_loss": 0.169117557931514}
+{"epoch": 25, "train_loss": 0.06949969903778663, "val_loss": 0.17529925882727618, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.0625, "avg_deadline_satisfaction": 0.0625, "avg_collisions": 0.5, "avg_mean_task_distance": 2.1450525358515025, "avg_min_pair_distance": 0.46091811052405174, "avg_missed_deadlines": 4.0, "avg_steps": 127.5, "collision_stop_rate": 0.5}, "selection_score": -0.153125}
+{"epoch": 26, "train_loss": 0.06656735367186353, "val_loss": 0.1833649734190355}
+{"epoch": 27, "train_loss": 0.0640098098272211, "val_loss": 0.18027360199484974}
+{"epoch": 28, "train_loss": 0.061910406605925075, "val_loss": 0.18180035405260112}
+{"epoch": 29, "train_loss": 0.05920029088011058, "val_loss": 0.1785598100650878}
+{"epoch": 30, "train_loss": 0.057140316631852324, "val_loss": 0.17686379573840116, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.09375, "avg_deadline_satisfaction": 0.09375, "avg_collisions": 0.75, "avg_mean_task_distance": 2.9029824937388438, "avg_min_pair_distance": 0.47096954603688024, "avg_missed_deadlines": 3.25, "avg_steps": 148.5, "collision_stop_rate": 0.75}, "selection_score": -0.22968750000000002}
+{"epoch": 31, "train_loss": 0.05538291160210309, "val_loss": 0.1881101342749649}
+{"epoch": 32, "train_loss": 0.05231129022711985, "val_loss": 0.18059149598481045}
+{"epoch": 33, "train_loss": 0.05161597037012197, "val_loss": 0.18004504308060165}
+{"epoch": 34, "train_loss": 0.04909603151129898, "val_loss": 0.18607200741923105}
+{"epoch": 35, "train_loss": 0.04748003786848053, "val_loss": 0.19219239870463276, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.125, "avg_deadline_satisfaction": 0.125, "avg_collisions": 0.5, "avg_mean_task_distance": 3.8906426378301653, "avg_min_pair_distance": 0.7321620612033286, "avg_missed_deadlines": 3.0, "avg_steps": 132.5, "collision_stop_rate": 0.5}, "selection_score": -0.13125}
+{"epoch": 36, "train_loss": 0.045519634981187426, "val_loss": 0.19615416420024953}
+{"epoch": 37, "train_loss": 0.04315837676102392, "val_loss": 0.1977074107166291}
+{"epoch": 38, "train_loss": 0.04150019153137468, "val_loss": 0.19484944567361492}
+{"epoch": 39, "train_loss": 0.04054069441998817, "val_loss": 0.1912551128505064}
+{"epoch": 40, "train_loss": 0.039618939765498414, "val_loss": 0.1926511112600565, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.0625, "avg_deadline_satisfaction": 0.0625, "avg_collisions": 0.5, "avg_mean_task_distance": 3.0135914683875242, "avg_min_pair_distance": 0.7083436510029455, "avg_missed_deadlines": 5.5, "avg_steps": 148.75, "collision_stop_rate": 0.5}, "selection_score": -0.153125}
+{"epoch": 41, "train_loss": 0.03698889003805602, "val_loss": 0.1986625607180897}
+{"epoch": 42, "train_loss": 0.03619779352520569, "val_loss": 0.19734589511949924}
+{"epoch": 43, "train_loss": 0.03530940771524771, "val_loss": 0.1926067347904401}
+{"epoch": 44, "train_loss": 0.03294797664983717, "val_loss": 0.1923488716794444}
+{"epoch": 45, "train_loss": 0.031760841279135095, "val_loss": 0.1953626517228605, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.0625, "avg_deadline_satisfaction": 0.0625, "avg_collisions": 0.25, "avg_mean_task_distance": 2.6997406582999983, "avg_min_pair_distance": 0.8462849453493776, "avg_missed_deadlines": 5.5, "avg_steps": 151.5, "collision_stop_rate": 0.25}, "selection_score": -0.065625}
+{"epoch": 46, "train_loss": 0.03221648452971524, "val_loss": 0.1900002205755473}
+{"epoch": 47, "train_loss": 0.030215421736226086, "val_loss": 0.19817661890604843}
+{"epoch": 48, "train_loss": 0.028659936807506257, "val_loss": 0.19400922749524138}
+{"epoch": 49, "train_loss": 0.031168296150219647, "val_loss": 0.18710123025146977}
+{"epoch": 50, "train_loss": 0.027643547715143713, "val_loss": 0.1907040122547187, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.25, "avg_deadline_satisfaction": 0.25, "avg_collisions": 0.0, "avg_mean_task_distance": 3.1873672747435244, "avg_min_pair_distance": 0.6698712619874625, "avg_missed_deadlines": 6.0, "avg_steps": 180.0, "collision_stop_rate": 0.0}, "selection_score": 0.0875}
+{"epoch": 51, "train_loss": 0.0260582055428178, "val_loss": 0.19746446224661277}
+{"epoch": 52, "train_loss": 0.026132713390188918, "val_loss": 0.1922449865383983}
+{"epoch": 53, "train_loss": 0.024980225931002173, "val_loss": 0.19209594595678417}
+{"epoch": 54, "train_loss": 0.026129359064798897, "val_loss": 0.18891347397085545}
+{"epoch": 55, "train_loss": 0.02521491280243859, "val_loss": 0.19382490044393177, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.1875, "avg_deadline_satisfaction": 0.1875, "avg_collisions": 0.5, "avg_mean_task_distance": 2.7473222980414667, "avg_min_pair_distance": 0.6741344522622824, "avg_missed_deadlines": 2.5, "avg_steps": 116.5, "collision_stop_rate": 0.5}, "selection_score": -0.10937500000000001}
+{"epoch": 56, "train_loss": 0.022557325993669924, "val_loss": 0.19725626451961165}
+{"epoch": 57, "train_loss": 0.022795649879967756, "val_loss": 0.19085416201989922}
+{"epoch": 58, "train_loss": 0.024288233761066095, "val_loss": 0.19314079473149917}
+{"epoch": 59, "train_loss": 0.021423826096025285, "val_loss": 0.20000264118758163}
+{"epoch": 60, "train_loss": 0.022274992872036693, "val_loss": 0.19459193066826888, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.1875, "avg_deadline_satisfaction": 0.1875, "avg_collisions": 0.5, "avg_mean_task_distance": 2.654364077211591, "avg_min_pair_distance": 0.3742645018008903, "avg_missed_deadlines": 2.5, "avg_steps": 133.25, "collision_stop_rate": 0.5}, "selection_score": -0.10937500000000001}
+{"epoch": 61, "train_loss": 0.020331893035795204, "val_loss": 0.19617726807260796}
+{"epoch": 62, "train_loss": 0.020054616934964846, "val_loss": 0.1970480199149322}
+{"epoch": 63, "train_loss": 0.019808725654120753, "val_loss": 0.19149108058994724}
+{"epoch": 64, "train_loss": 0.020580075961857635, "val_loss": 0.1936222169293268}
+{"epoch": 65, "train_loss": 0.01961396651918108, "val_loss": 0.19931105284929454, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.21875, "avg_deadline_satisfaction": 0.21875, "avg_collisions": 0.25, "avg_mean_task_distance": 2.8905342872387263, "avg_min_pair_distance": 0.46779664079822497, "avg_missed_deadlines": 4.25, "avg_steps": 153.75, "collision_stop_rate": 0.25}, "selection_score": -0.01093750000000001}
+{"epoch": 66, "train_loss": 0.018061001718065732, "val_loss": 0.20293940267791705}
+{"epoch": 67, "train_loss": 0.01998430620986189, "val_loss": 0.19585528606049982}
+{"epoch": 68, "train_loss": 0.01889639846612333, "val_loss": 0.19280271159174542}
+{"epoch": 69, "train_loss": 0.017077321726507052, "val_loss": 0.19497550314796777}
+{"epoch": 70, "train_loss": 0.018085754012613916, "val_loss": 0.19679030573350334, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.125, "avg_deadline_satisfaction": 0.125, "avg_collisions": 0.75, "avg_mean_task_distance": 3.0516083878318545, "avg_min_pair_distance": 0.6532294546991035, "avg_missed_deadlines": 1.5, "avg_steps": 90.25, "collision_stop_rate": 0.75}, "selection_score": -0.21875}
+{"epoch": 71, "train_loss": 0.01656475047278799, "val_loss": 0.19548950282790298}
+{"epoch": 72, "train_loss": 0.015792706758749175, "val_loss": 0.1961558417095581}
+{"epoch": 73, "train_loss": 0.019693703253015216, "val_loss": 0.1964647596081098}
+{"epoch": 74, "train_loss": 0.01584135479027416, "val_loss": 0.2016875540765579}
+{"epoch": 75, "train_loss": 0.014422939941930566, "val_loss": 0.1978180752512777, "eval": {"success_rate": 0.25, "avg_completed_fraction": 0.28125, "avg_deadline_satisfaction": 0.28125, "avg_collisions": 0.5, "avg_mean_task_distance": 2.8111728955033826, "avg_min_pair_distance": 0.8656649359812957, "avg_missed_deadlines": 4.0, "avg_steps": 131.25, "collision_stop_rate": 0.5}, "selection_score": 0.17343750000000002, "best_updated": true}
+{"epoch": 76, "train_loss": 0.01569608027641009, "val_loss": 0.1995369363720307}
+{"epoch": 77, "train_loss": 0.01665905999527411, "val_loss": 0.20142025935430347}
+{"epoch": 78, "train_loss": 0.01743069312118723, "val_loss": 0.19701716736613195}
+{"epoch": 79, "train_loss": 0.014096834183797497, "val_loss": 0.19996523163336816}
+{"epoch": 80, "train_loss": 0.013493186907731927, "val_loss": 0.20174070588268694, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.0625, "avg_deadline_satisfaction": 0.0625, "avg_collisions": 0.75, "avg_mean_task_distance": 2.3583305403945642, "avg_min_pair_distance": 0.4619374586879246, "avg_missed_deadlines": 1.5, "avg_steps": 72.25, "collision_stop_rate": 0.75}, "selection_score": -0.240625}
+{"epoch": 81, "train_loss": 0.014582962479671167, "val_loss": 0.19393656420150018}
+{"epoch": 82, "train_loss": 0.01379612503187184, "val_loss": 0.1978665728364528}
+{"epoch": 83, "train_loss": 0.016162557121645122, "val_loss": 0.200166578793488}
+{"epoch": 84, "train_loss": 0.014620883763908996, "val_loss": 0.20209980157475607}
+{"epoch": 85, "train_loss": 0.012566769054524186, "val_loss": 0.20514378643738815, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.21875, "avg_deadline_satisfaction": 0.1875, "avg_collisions": 0.75, "avg_mean_task_distance": 2.739480404528953, "avg_min_pair_distance": 0.640209523627607, "avg_missed_deadlines": 5.75, "avg_steps": 162.5, "collision_stop_rate": 0.75}, "selection_score": -0.19687500000000002}
+{"epoch": 86, "train_loss": 0.013719022823694286, "val_loss": 0.1985052595472163}
+{"epoch": 87, "train_loss": 0.014847433898819614, "val_loss": 0.1971540726676938}
+{"epoch": 88, "train_loss": 0.015279572026271395, "val_loss": 0.19757097260693887}
+{"epoch": 89, "train_loss": 0.01208036984522575, "val_loss": 0.20233538371588414}
+{"epoch": 90, "train_loss": 0.011923733949410995, "val_loss": 0.19865468539674544, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.0625, "avg_deadline_satisfaction": 0.0625, "avg_collisions": 0.75, "avg_mean_task_distance": 2.837666190122123, "avg_min_pair_distance": 0.6463624676826893, "avg_missed_deadlines": 1.5, "avg_steps": 75.25, "collision_stop_rate": 0.75}, "selection_score": -0.240625}
+{"epoch": 91, "train_loss": 0.014537963962572092, "val_loss": 0.1956891793286472}
+{"epoch": 92, "train_loss": 0.013534213966849097, "val_loss": 0.19949645623121234}
+{"epoch": 93, "train_loss": 0.012427422586263599, "val_loss": 0.19909748454921924}
+{"epoch": 94, "train_loss": 0.011295506560856802, "val_loss": 0.18997823908825273}
+{"epoch": 95, "train_loss": 0.014772448646737667, "val_loss": 0.19834078306642672, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.0625, "avg_deadline_satisfaction": 0.0625, "avg_collisions": 0.75, "avg_mean_task_distance": 2.3955841027749316, "avg_min_pair_distance": 0.3485288379954486, "avg_missed_deadlines": 4.0, "avg_steps": 110.5, "collision_stop_rate": 0.75}, "selection_score": -0.240625}
+{"epoch": 96, "train_loss": 0.013198707813143215, "val_loss": 0.19746751290513204}
+{"epoch": 97, "train_loss": 0.011151075437343224, "val_loss": 0.1947687173938556}
+{"epoch": 98, "train_loss": 0.013431521977213945, "val_loss": 0.20220372556110044}
+{"epoch": 99, "train_loss": 0.010934717483074903, "val_loss": 0.19906603599111328}
+{"epoch": 100, "train_loss": 0.010458688412555234, "val_loss": 0.20202671393303068, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.09375, "avg_deadline_satisfaction": 0.09375, "avg_collisions": 0.5, "avg_mean_task_distance": 3.035656595616353, "avg_min_pair_distance": 0.41450274266248904, "avg_missed_deadlines": 3.5, "avg_steps": 135.0, "collision_stop_rate": 0.5}, "selection_score": -0.14218750000000002}
+{"epoch": 101, "train_loss": 0.013026753631769009, "val_loss": 0.19801735854652222}
+{"epoch": 102, "train_loss": 0.010418261917068438, "val_loss": 0.19895222558517986}
+{"epoch": 103, "train_loss": 0.01014656560127257, "val_loss": 0.20045439406309187}
+{"epoch": 104, "train_loss": 0.01399964539891899, "val_loss": 0.19440748320692883}
+{"epoch": 105, "train_loss": 0.010040991122686017, "val_loss": 0.19351291286210262, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.25, "avg_deadline_satisfaction": 0.25, "avg_collisions": 0.25, "avg_mean_task_distance": 2.3969063686557144, "avg_min_pair_distance": 0.8594880253751151, "avg_missed_deadlines": 4.0, "avg_steps": 163.0, "collision_stop_rate": 0.25}, "selection_score": -6.938893903907228e-18}
+{"epoch": 106, "train_loss": 0.009693985575213027, "val_loss": 0.2017273097637198}
+{"epoch": 107, "train_loss": 0.011631601532981973, "val_loss": 0.20180238016459737}
+{"epoch": 108, "train_loss": 0.011605005419943588, "val_loss": 0.19659139843729678}
+{"epoch": 109, "train_loss": 0.010596605792691692, "val_loss": 0.20002831519481593}
+{"epoch": 110, "train_loss": 0.009798795766431317, "val_loss": 0.20024200675030615, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.1875, "avg_deadline_satisfaction": 0.1875, "avg_collisions": 0.0, "avg_mean_task_distance": 2.1285750709044766, "avg_min_pair_distance": 1.1504036291407296, "avg_missed_deadlines": 6.5, "avg_steps": 180.0, "collision_stop_rate": 0.0}, "selection_score": 0.06562499999999999}
+{"epoch": 111, "train_loss": 0.011692212958017546, "val_loss": 0.20057931118090416}
+{"epoch": 112, "train_loss": 0.011699979749442061, "val_loss": 0.19717084777657873}
+{"epoch": 113, "train_loss": 0.012514373948511574, "val_loss": 0.19933284652430475}
+{"epoch": 114, "train_loss": 0.009394237851177033, "val_loss": 0.1960553265503785}
+{"epoch": 115, "train_loss": 0.009113375056846042, "val_loss": 0.19750561581957818, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.1875, "avg_deadline_satisfaction": 0.1875, "avg_collisions": 0.75, "avg_mean_task_distance": 2.1764651122497667, "avg_min_pair_distance": 0.48328685099525825, "avg_missed_deadlines": 0.75, "avg_steps": 112.25, "collision_stop_rate": 0.75}, "selection_score": -0.19687500000000002}
+{"epoch": 116, "train_loss": 0.010507727685811681, "val_loss": 0.1951114048901391}
+{"epoch": 117, "train_loss": 0.00923727480015376, "val_loss": 0.1940420574594533}
+{"epoch": 118, "train_loss": 0.010567667103513732, "val_loss": 0.19973454540429106}
+{"epoch": 119, "train_loss": 0.009788470728869859, "val_loss": 0.19908775218562888}
+{"epoch": 120, "train_loss": 0.00912993910745673, "val_loss": 0.20130493621497106, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.125, "avg_deadline_satisfaction": 0.125, "avg_collisions": 0.75, "avg_mean_task_distance": 2.9664393274077714, "avg_min_pair_distance": 0.353961504915407, "avg_missed_deadlines": 3.25, "avg_steps": 122.0, "collision_stop_rate": 0.75}, "selection_score": -0.21875}

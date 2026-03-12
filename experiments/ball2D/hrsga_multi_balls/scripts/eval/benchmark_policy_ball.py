@@ -17,6 +17,15 @@ from envball_hrsga import HRSGABallEnvironment
 from hrsga_ball_model import load_agent_from_checkpoint as load_hrsga_agent
 from standard_gnn_ball_model import load_agent_from_checkpoint as load_gnn_agent
 
+
+def task_rule_config_from_snapshot(snapshot):
+    dwell_values = [int(task.get("dwell_steps", 1)) for task in snapshot["tasks"]]
+    return {
+        "visit_order_mode": "ranked",
+        "min_dwell_steps": min(dwell_values) if dwell_values else 0,
+        "max_dwell_steps": max(dwell_values) if dwell_values else 0,
+    }
+
 def _resolve_default_model_path(model_type):
     models_dir = os.path.join(ROOT_DIR, "models")
     default_names = {
@@ -81,6 +90,7 @@ def run_episode(model_type, agent, seed, max_steps=None, layout_mode="representa
         "collision_terminated": collision_terminated,
         "avg_inference_ms": float(np.mean(inference_times_ms)) if inference_times_ms else 0.0,
         "p95_inference_ms": float(np.percentile(inference_times_ms, 95)) if inference_times_ms else 0.0,
+        "task_rules": task_rule_config_from_snapshot(snapshot),
     }
 
 
@@ -96,6 +106,7 @@ def aggregate_runs(model_type, model_path, layout_mode, strict_collision_stop, r
         "model_path": model_path,
         "layout_mode": layout_mode,
         "strict_collision_stop": bool(strict_collision_stop),
+        "task_rules": runs[0].get("task_rules", {}),
         "num_tests": int(len(runs)),
         "success_rate": mean("success"),
         "avg_completed_tasks": mean("completed_tasks"),

@@ -22,22 +22,22 @@
     </style>
   </defs>
 
-  <text x="42" y="44" class="title">Representative Layout Schematic</text>
-  <text x="42" y="72" class="body">Fixed bilateral starts + central dual obstacles + opposite-side targets with 4 discrete y-order permutations.</text>
+  <text x="42" y="44" class="title">Representative 布局示意图</text>
+  <text x="42" y="72" class="body">固定双侧起点、中央双障碍与对侧任务槽位构成共享骨架，目标纵向顺序由 4 种离散置换决定。</text>
 
   <rect x="36" y="96" width="658" height="424" rx="18" class="panel" />
   <rect x="84" y="132" width="562" height="352" rx="8" class="arena" />
 
-  <text x="104" y="122" class="small">World x in [-4.5, 4.5], starts/tasks placed near x = +/- 3.7</text>
+  <text x="104" y="122" class="small">世界坐标 x ∈ [-4.5, 4.5]，起点与任务槽位分布在 x = ±3.7 附近</text>
   <line x1="365" y1="132" x2="365" y2="484" class="corridor" />
 
   <circle cx="365" cy="205" r="44" class="obstacle" />
   <circle cx="365" cy="411" r="44" class="obstacle" />
-  <text x="330" y="210" class="label">Obs U</text>
-  <text x="330" y="416" class="label">Obs L</text>
+  <text x="320" y="210" class="label">上障碍</text>
+  <text x="320" y="416" class="label">下障碍</text>
 
   <line x1="260" y1="308" x2="470" y2="308" class="corridor" />
-  <text x="302" y="297" class="small">narrow coordination corridor</text>
+  <text x="288" y="297" class="small">狭窄协调通道</text>
 
   <circle cx="132" cy="205" r="16" class="start" />
   <circle cx="132" cy="411" r="16" class="start" />
@@ -54,35 +54,35 @@
   <text x="580" y="182" class="label">R1</text>
   <text x="580" y="438" class="label">R2</text>
 
-  <text x="201" y="182" class="label">Left goals</text>
-  <text x="503" y="182" class="label">Right goals</text>
+  <text x="177" y="182" class="label">左侧任务槽位</text>
+  <text x="479" y="182" class="label">右侧任务槽位</text>
 
   <path d="M148 205 C 240 205, 295 280, 503 205" class="trajL" />
   <path d="M148 411 C 240 411, 295 336, 503 411" class="trajL" />
   <path d="M582 205 C 505 205, 455 336, 227 411" class="trajR" />
   <path d="M582 411 C 500 411, 455 280, 227 205" class="trajR" />
 
-  <text x="110" y="510" class="small">Blue circles: left/right starts</text>
-  <text x="292" y="510" class="small">Orange squares: opposite-side task slots</text>
-  <text x="538" y="510" class="small">Dashed paths: representative crossing / merge conflicts</text>
+  <text x="84" y="510" class="small">蓝色圆点：左右两侧机器人起点</text>
+  <text x="300" y="510" class="small">橙色方块：对侧任务槽位</text>
+  <text x="514" y="510" class="small">虚线路径：代表性的会车 / 汇合冲突模式</text>
 
   <rect x="726" y="96" width="216" height="424" rx="18" class="panel" />
-  <text x="748" y="132" class="label">Scenario Variants</text>
-  <text x="748" y="162" class="body">seed mod 4 selects</text>
-  <text x="748" y="186" class="body">one target-order pattern:</text>
+  <text x="748" y="132" class="label">离散变体</text>
+  <text x="748" y="162" class="body">seed mod 4 选择一种</text>
+  <text x="748" y="186" class="body">目标纵向顺序模式：</text>
 
-  <text x="748" y="232" class="label">Pattern 0</text>
-  <text x="748" y="254" class="small">straight-through pairing</text>
+  <text x="748" y="232" class="label">模式 0</text>
+  <text x="748" y="254" class="small">直连配对</text>
 
-  <text x="748" y="300" class="label">Pattern 1</text>
-  <text x="748" y="322" class="small">reversed y-order</text>
+  <text x="748" y="300" class="label">模式 1</text>
+  <text x="748" y="322" class="small">纵向顺序反转</text>
 
-  <text x="748" y="368" class="label">Pattern 2</text>
-  <text x="748" y="390" class="small">cyclic shift in y-order</text>
+  <text x="748" y="368" class="label">模式 2</text>
+  <text x="748" y="390" class="small">纵向顺序循环移位</text>
 
-  <text x="748" y="436" class="label">Pattern 3</text>
-  <text x="748" y="458" class="small">alternating outer-inner order</text>
+  <text x="748" y="436" class="label">模式 3</text>
+  <text x="748" y="458" class="small">外侧-内侧交替</text>
 
-  <text x="748" y="500" class="small">All variants preserve the same</text>
-  <text x="748" y="520" class="small">starts, obstacles, and corridor.</text>
+  <text x="748" y="500" class="small">所有变体共享相同的</text>
+  <text x="748" y="520" class="small">起点、障碍物与中央通道骨架。</text>
 </svg>

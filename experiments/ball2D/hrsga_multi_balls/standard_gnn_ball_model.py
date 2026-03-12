@@ -33,7 +33,7 @@ class SharedMessagePassing(nn.Module):
     def __init__(self, hidden_dim, edge_hidden_dim):
         super().__init__()
         self.edge_rr = MLP(8, [edge_hidden_dim], hidden_dim)
-        self.edge_tr = MLP(8, [edge_hidden_dim], hidden_dim)
+        self.edge_tr = MLP(14, [edge_hidden_dim], hidden_dim)
         self.edge_or = MLP(5, [edge_hidden_dim], hidden_dim)
         self.message_mlp = MLP(hidden_dim * 3, [hidden_dim, hidden_dim], hidden_dim)
         self.update_mlp = MLP(hidden_dim * 2, [hidden_dim * 2, hidden_dim], hidden_dim)
@@ -63,8 +63,8 @@ class StandardGNNPolicyNetwork(nn.Module):
     def __init__(self, hidden_dim=128, edge_hidden_dim=64, action_scale=1.4):
         super().__init__()
         self.action_scale = action_scale
-        self.robot_encoder = MLP(11, [hidden_dim, hidden_dim], hidden_dim)
-        self.task_encoder = MLP(8, [hidden_dim, hidden_dim], hidden_dim)
+        self.robot_encoder = MLP(13, [hidden_dim, hidden_dim], hidden_dim)
+        self.task_encoder = MLP(14, [hidden_dim, hidden_dim], hidden_dim)
         self.obstacle_encoder = MLP(3, [hidden_dim, hidden_dim], hidden_dim)
         self.message_passing = SharedMessagePassing(hidden_dim=hidden_dim, edge_hidden_dim=edge_hidden_dim)
         self.action_head = MLP(hidden_dim, [hidden_dim, hidden_dim], 2)
@@ -134,13 +134,36 @@ class StandardGNNBallAgent:
 
     def load(self, path, optimizer=None):
         checkpoint = torch.load(path, map_location=self.device)
-        self.model.load_state_dict(checkpoint["model_state"])
+        adapted_state = _adapt_state_dict_for_model(self.model.state_dict(), checkpoint["model_state"])
+        self.model.load_state_dict(adapted_state)
         if optimizer is not None and "optimizer_state" in checkpoint:
             optimizer.load_state_dict(checkpoint["optimizer_state"])
         return {
             "epoch": int(checkpoint.get("epoch", 0)),
             "best_score": float(checkpoint.get("best_score", -np.inf)),
         }
+
+
+def _adapt_state_dict_for_model(model_state, checkpoint_state):
+    adapted = dict(model_state)
+    for key, value in checkpoint_state.items():
+        if key not in adapted:
+            continue
+        target = adapted[key]
+        if target.shape == value.shape:
+            adapted[key] = value
+            continue
+        if target.ndim != value.ndim:
+            continue
+        if any(target.shape[index] != value.shape[index] for index in range(target.ndim - 1)):
+            continue
+        if target.shape[-1] < value.shape[-1]:
+            continue
+        patched = target.clone()
+        slices = tuple(slice(0, value.shape[index]) for index in range(value.ndim))
+        patched[slices] = value
+        adapted[key] = patched
+    return adapted
 
 
 def load_agent_from_checkpoint(path, device=None):
@@ -153,7 +176,8 @@ def load_agent_from_checkpoint(path, device=None):
         edge_hidden_dim=int(checkpoint.get("edge_hidden_dim", 64)),
         device=device,
     )
-    agent.model.load_state_dict(checkpoint["model_state"])
+    adapted_state = _adapt_state_dict_for_model(agent.model.state_dict(), checkpoint["model_state"])
+    agent.model.load_state_dict(adapted_state)
     agent.model.eval()
     return agent
 

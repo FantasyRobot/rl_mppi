@@ -46,8 +46,12 @@ def pairwise_distance(a, b) -> float:
 class BallAgent:
     pos: tuple[float, float]
     vel: tuple[float, float]
+    start_pos: tuple[float, float]
     task_id: int = -1
     reached: bool = False
+    is_servicing: bool = False
+    service_task_id: int = -1
+    is_returning_home: bool = False
 
 
 @dataclass
@@ -57,8 +61,13 @@ class TaskNode:
     release_step: int
     deadline_step: int
     priority: float
+    visit_rank: int
+    dwell_steps: int
     completed: bool = False
     completed_step: int = -1
+    servicing_agent: int = -1
+    service_progress: int = 0
+    arrival_step: int = -1
 
 
 @dataclass
@@ -79,6 +88,9 @@ class HRSGABallEnvironment:
         task_radius: float = 0.30,
         max_accel: float = 1.4,
         max_speed: float = 1.25,
+        enforce_visit_order: bool = True,
+        min_dwell_steps: int = 1,
+        max_dwell_steps: int = 3,
     ):
         self.num_balls = int(num_balls)
         self.num_tasks = int(max(self.num_balls, num_tasks if num_tasks is not None else self.num_balls * 2))
@@ -89,6 +101,12 @@ class HRSGABallEnvironment:
         self.task_radius = float(task_radius)
         self.max_accel = float(max_accel)
         self.max_speed = float(max_speed)
+        self.home_return_kp = 1.15
+        self.home_return_kd = 0.55
+        self.home_idle_tolerance = max(0.10, self.ball_radius * 0.8)
+        self.enforce_visit_order = bool(enforce_visit_order)
+        self.min_dwell_steps = int(max(1, min_dwell_steps))
+        self.max_dwell_steps = int(max(self.min_dwell_steps, max_dwell_steps))
         self.step_count = 0
         self.total_collisions = 0
         self.min_pair_distance = float("inf")
@@ -98,6 +116,13 @@ class HRSGABallEnvironment:
         ]
         self.agents: list[BallAgent] = []
         self.tasks: list[TaskNode] = []
+
+    def task_rule_config(self):
+        return {
+            "enforce_visit_order": bool(self.enforce_visit_order),
+            "min_dwell_steps": int(self.min_dwell_steps),
+            "max_dwell_steps": int(self.max_dwell_steps),
+        }
 
     def reset(self, seed: int | None = None, random_layout: bool = False, layout_mode: str | None = None):
         rng = random.Random(seed)
@@ -143,6 +168,8 @@ class HRSGABallEnvironment:
                     release_step=release_step,
                     deadline_step=deadline_step,
                     priority=1.0 + 0.03 * idx,
+                    visit_rank=len(self.tasks) + 1,
+                    dwell_steps=self._task_dwell_steps(len(self.tasks)),
                 )
             )
 
@@ -157,6 +184,8 @@ class HRSGABallEnvironment:
                     release_step=release_step,
                     deadline_step=deadline_step,
                     priority=1.0 + 0.03 * (left_count + idx),
+                    visit_rank=len(self.tasks) + 1,
+                    dwell_steps=self._task_dwell_steps(len(self.tasks)),
                 )
             )
 
@@ -174,7 +203,7 @@ class HRSGABallEnvironment:
                 min_gap=min_agent_gap,
                 clearance=max(self.ball_radius, 0.18),
             )
-            self.agents.append(BallAgent(pos=agent_pos, vel=(0.0, 0.0)))
+            self.agents.append(BallAgent(pos=agent_pos, vel=(0.0, 0.0), start_pos=agent_pos))
             occupied_agent_positions.append(agent_pos)
 
         for task_idx in range(self.num_tasks):
@@ -195,6 +224,8 @@ class HRSGABallEnvironment:
                     release_step=release_step,
                     deadline_step=deadline_step,
                     priority=1.0 + 0.03 * task_idx,
+                    visit_rank=task_idx + 1,
+                    dwell_steps=self._task_dwell_steps(task_idx),
                 )
             )
             occupied_task_positions.append(task_pos)
@@ -239,6 +270,8 @@ class HRSGABallEnvironment:
                     release_step=release_step,
                     deadline_step=deadline_step,
                     priority=1.0 + 0.04 * task_idx,
+                    visit_rank=task_idx + 1,
+                    dwell_steps=self._task_dwell_steps(task_idx + scenario_index),
                 )
             )
 
@@ -249,11 +282,13 @@ class HRSGABallEnvironment:
 
         for idx in range(left_count):
             jitter = rng.uniform(-0.08, 0.08) if add_jitter else 0.0
-            self.agents.append(BallAgent(pos=(-self.world_size + 0.8, y_slots[idx] + jitter), vel=(0.0, 0.0)))
+            start_pos = (-self.world_size + 0.8, y_slots[idx] + jitter)
+            self.agents.append(BallAgent(pos=start_pos, vel=(0.0, 0.0), start_pos=start_pos))
 
         for idx in range(right_count):
             jitter = rng.uniform(-0.08, 0.08) if add_jitter else 0.0
-            self.agents.append(BallAgent(pos=(self.world_size - 0.8, -y_slots[idx] + jitter), vel=(0.0, 0.0)))
+            start_pos = (self.world_size - 0.8, -y_slots[idx] + jitter)
+            self.agents.append(BallAgent(pos=start_pos, vel=(0.0, 0.0), start_pos=start_pos))
 
     def _representative_permutation(self, values, scenario_index: int):
         if len(values) <= 1:
@@ -320,11 +355,40 @@ class HRSGABallEnvironment:
         span = min(3.4, 1.2 + 0.45 * (count - 1))
         return [(-span / 2.0) + span * index / (count - 1) for index in range(count)]
 
+    def _task_dwell_steps(self, task_index: int):
+        span = self.max_dwell_steps - self.min_dwell_steps + 1
+        return self.min_dwell_steps + (int(task_index) % max(1, span))
+
+    def _predecessors_completed(self, task: TaskNode):
+        if not self.enforce_visit_order:
+            return True
+        for other_task in self.tasks:
+            if other_task.visit_rank < task.visit_rank and not other_task.completed:
+                return False
+        return True
+
+    def _task_is_available(self, task: TaskNode):
+        if task.completed:
+            return False
+        if self.step_count < task.release_step:
+            return False
+        return self._predecessors_completed(task)
+
+    def _remaining_dwell_steps(self, task: TaskNode):
+        return max(0, int(task.dwell_steps) - int(task.service_progress))
+
     def _available_task_indices(self):
         return [
             task_index
             for task_index, task in enumerate(self.tasks)
-            if not task.completed
+            if self._task_is_available(task) and task.servicing_agent < 0
+        ]
+
+    def _assignable_task_indices(self):
+        return [
+            task_index
+            for task_index, task in enumerate(self.tasks)
+            if not task.completed and task.servicing_agent < 0
         ]
 
     def _assignment_score(self, agent: BallAgent, task: TaskNode):
@@ -336,19 +400,39 @@ class HRSGABallEnvironment:
         return (1.8 / (0.35 + distance)) + release_bias + urgency + 0.12 * task.priority
 
     def _update_assignments(self):
+        all_tasks_completed = all(task.completed for task in self.tasks)
         for agent in self.agents:
-            agent.task_id = -1
             agent.reached = False
+            if not agent.is_servicing:
+                agent.task_id = -1
+                agent.service_task_id = -1
+                agent.is_returning_home = all_tasks_completed and not self._home_status(agent)[0]
         for task in self.tasks:
-            task.assigned_agent = -1
+            if task.completed:
+                task.assigned_agent = -1
+                task.servicing_agent = -1
+                task.service_progress = max(task.service_progress, task.dwell_steps)
+            elif task.servicing_agent < 0:
+                task.assigned_agent = -1
+
+        assigned_agents = {agent_index for agent_index, agent in enumerate(self.agents) if agent.is_servicing}
+        assigned_tasks = set()
+        for task_index, task in enumerate(self.tasks):
+            if task.completed or task.servicing_agent < 0:
+                continue
+            task.assigned_agent = task.servicing_agent
+            assigned_tasks.add(task_index)
+            service_agent = self.agents[task.servicing_agent]
+            service_agent.task_id = task_index
+            service_agent.service_task_id = task_index
 
         candidate_pairs = []
         for agent_index, agent in enumerate(self.agents):
-            for task_index in self._available_task_indices():
+            if agent_index in assigned_agents:
+                continue
+            for task_index in self._assignable_task_indices():
                 candidate_pairs.append((self._assignment_score(agent, self.tasks[task_index]), agent_index, task_index))
 
-        assigned_agents = set()
-        assigned_tasks = set()
         for _, agent_index, task_index in sorted(candidate_pairs, key=lambda item: item[0], reverse=True):
             if agent_index in assigned_agents or task_index in assigned_tasks:
                 continue
@@ -356,6 +440,36 @@ class HRSGABallEnvironment:
             self.tasks[task_index].assigned_agent = agent_index
             assigned_agents.add(agent_index)
             assigned_tasks.add(task_index)
+
+    def _home_status(self, agent: BallAgent):
+        distance = pairwise_distance(agent.pos, agent.start_pos)
+        at_home = distance <= self.home_idle_tolerance
+        return at_home, distance
+
+    def _return_home_step(self, agent: BallAgent):
+        at_home, _ = self._home_status(agent)
+        if at_home:
+            agent.pos = agent.start_pos
+            agent.vel = (0.0, 0.0)
+            agent.is_returning_home = False
+            return
+
+        rel_home = vec_sub(agent.start_pos, agent.pos)
+        desired_accel = vec_sub(vec_mul(rel_home, self.home_return_kp), vec_mul(agent.vel, self.home_return_kd))
+        accel = vec_clip_norm(desired_accel, self.max_accel)
+        new_vel = vec_add(agent.vel, vec_mul(accel, self.dt))
+        new_vel = vec_clip_norm(new_vel, self.max_speed)
+        new_vel = vec_mul(new_vel, 0.98)
+        tentative_pos = vec_add(agent.pos, vec_mul(new_vel, self.dt))
+        bounded_pos, bounded_vel = self._apply_bounds(tentative_pos, new_vel)
+        obstacle_pos, obstacle_vel = self._apply_obstacles(bounded_pos, bounded_vel)
+        agent.pos = obstacle_pos
+        agent.vel = obstacle_vel
+        at_home, _ = self._home_status(agent)
+        agent.is_returning_home = not at_home
+        if at_home:
+            agent.pos = agent.start_pos
+            agent.vel = (0.0, 0.0)
 
     def snapshot(self):
         return {
@@ -367,8 +481,12 @@ class HRSGABallEnvironment:
                 {
                     "pos": agent.pos,
                     "vel": agent.vel,
+                    "start_pos": agent.start_pos,
                     "task_id": agent.task_id,
                     "reached": agent.reached,
+                    "is_servicing": agent.is_servicing,
+                    "service_task_id": agent.service_task_id,
+                    "is_returning_home": agent.is_returning_home,
                 }
                 for agent in self.agents
             ],
@@ -379,8 +497,16 @@ class HRSGABallEnvironment:
                     "release_step": task.release_step,
                     "deadline_step": task.deadline_step,
                     "priority": task.priority,
+                    "visit_rank": task.visit_rank,
+                    "dwell_steps": task.dwell_steps,
                     "completed": task.completed,
                     "completed_step": task.completed_step,
+                    "servicing_agent": task.servicing_agent,
+                    "service_progress": task.service_progress,
+                    "arrival_step": task.arrival_step,
+                    "remaining_dwell_steps": self._remaining_dwell_steps(task),
+                    "predecessor_pending": float(not self._predecessors_completed(task)),
+                    "is_available": self._task_is_available(task) and task.servicing_agent < 0,
                 }
                 for task in self.tasks
             ],
@@ -395,8 +521,20 @@ class HRSGABallEnvironment:
             raise ValueError("Action count must match agent count.")
 
         self.step_count += 1
+        all_tasks_completed = all(task.completed for task in self.tasks)
 
         for agent, action in zip(self.agents, actions):
+            if agent.is_servicing:
+                agent.vel = (0.0, 0.0)
+                agent.is_returning_home = False
+                continue
+            if agent.task_id < 0:
+                if all_tasks_completed:
+                    self._return_home_step(agent)
+                else:
+                    agent.vel = (0.0, 0.0)
+                    agent.is_returning_home = False
+                continue
             accel = vec_clip_norm((float(action[0]), float(action[1])), self.max_accel)
             new_vel = vec_add(agent.vel, vec_mul(accel, self.dt))
             new_vel = vec_clip_norm(new_vel, self.max_speed)
@@ -406,11 +544,12 @@ class HRSGABallEnvironment:
             obstacle_pos, obstacle_vel = self._apply_obstacles(bounded_pos, bounded_vel)
             agent.pos = obstacle_pos
             agent.vel = obstacle_vel
+            agent.is_returning_home = False
 
         pair_collisions = self._resolve_agent_collisions()
         self.total_collisions += pair_collisions
 
-        self._complete_tasks()
+        self._update_task_service()
         self._update_assignments()
 
         completed_tasks = sum(int(task.completed) for task in self.tasks)
@@ -436,17 +575,62 @@ class HRSGABallEnvironment:
             "missed_deadlines": missed_deadlines,
             "mean_task_distance": mean_task_distance,
             "min_pair_distance": self.min_pair_distance,
+            "active_service_tasks": sum(int(task.servicing_agent >= 0 and not task.completed) for task in self.tasks),
         }
         return self.snapshot(), done, info
 
-    def _complete_tasks(self):
+    def _finish_task(self, task_index: int):
+        task = self.tasks[task_index]
+        task.completed = True
+        task.completed_step = self.step_count
+        servicing_agent = task.servicing_agent
+        if 0 <= servicing_agent < len(self.agents):
+            self.agents[servicing_agent].is_servicing = False
+            self.agents[servicing_agent].service_task_id = -1
+            self.agents[servicing_agent].task_id = -1
+            self.agents[servicing_agent].vel = (0.0, 0.0)
+            self.agents[servicing_agent].is_returning_home = all(item.completed for item in self.tasks)
+        task.assigned_agent = -1
+        task.servicing_agent = -1
+        task.service_progress = task.dwell_steps
+
+    def _update_task_service(self):
         for task in self.tasks:
-            if task.completed or self.step_count < task.release_step:
+            if task.completed or not self._task_is_available(task):
                 continue
-            for agent in self.agents:
+
+            if task.servicing_agent >= 0:
+                agent = self.agents[task.servicing_agent]
                 if pairwise_distance(agent.pos, task.pos) <= self.task_radius:
-                    task.completed = True
-                    task.completed_step = self.step_count
+                    task.service_progress += 1
+                    agent.vel = (0.0, 0.0)
+                    if task.service_progress >= task.dwell_steps:
+                        self._finish_task(self.tasks.index(task))
+                else:
+                    agent.is_servicing = False
+                    agent.service_task_id = -1
+                    agent.is_returning_home = False
+                    task.servicing_agent = -1
+                    task.assigned_agent = -1
+                    task.service_progress = 0
+                    task.arrival_step = -1
+                continue
+
+            for agent_index, agent in enumerate(self.agents):
+                if agent.is_servicing:
+                    continue
+                if pairwise_distance(agent.pos, task.pos) <= self.task_radius:
+                    agent.is_servicing = True
+                    agent.service_task_id = self.tasks.index(task)
+                    agent.task_id = self.tasks.index(task)
+                    agent.vel = (0.0, 0.0)
+                    agent.is_returning_home = False
+                    task.assigned_agent = agent_index
+                    task.servicing_agent = agent_index
+                    task.service_progress = 1
+                    task.arrival_step = self.step_count
+                    if task.service_progress >= task.dwell_steps:
+                        self._finish_task(self.tasks.index(task))
                     break
 
     def _mean_unfinished_task_distance(self):
