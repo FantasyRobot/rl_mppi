@@ -1,0 +1,28 @@
+{
+  "run_name": "formal_diffusion_poilcy_2r8t",
+  "run_dir": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_diffusion_balls\\runs\\formal_diffusion_poilcy_2r8t",
+  "best_score": 0.0984375,
+  "best_eval": {
+    "success_rate": 0.0,
+    "avg_completed_fraction": 0.3125,
+    "avg_deadline_satisfaction": 0.28125,
+    "avg_collisions": 0.0,
+    "avg_mean_task_distance": 2.385085512219457,
+    "avg_min_pair_distance": 3.864677525071228,
+    "avg_missed_deadlines": 5.5,
+    "avg_steps": 180.0,
+    "collision_stop_rate": 0.0
+  },
+  "task_rules": {
+    "enforce_visit_order": true,
+    "min_dwell_steps": 1,
+    "max_dwell_steps": 3
+  },
+  "final_epoch": 120,
+  "config_path": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_diffusion_balls\\runs\\formal_diffusion_poilcy_2r8t\\config.json",
+  "metrics_path": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_diffusion_balls\\runs\\formal_diffusion_poilcy_2r8t\\logs\\metrics.jsonl",
+  "best_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_diffusion_balls\\runs\\formal_diffusion_poilcy_2r8t\\checkpoints\\hrsga_diffusion_poilcy_best.pt",
+  "latest_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_diffusion_balls\\runs\\formal_diffusion_poilcy_2r8t\\checkpoints\\hrsga_diffusion_poilcy_latest.pt",
+  "canonical_best_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_diffusion_balls\\models\\hrsga_diffusion_poilcy_best.pt",
+  "canonical_latest_checkpoint": "D:\\VirtualSpace\\rl_mppi\\experiments\\ball2D\\hrsga_diffusion_balls\\models\\hrsga_diffusion_poilcy_latest.pt"
+}

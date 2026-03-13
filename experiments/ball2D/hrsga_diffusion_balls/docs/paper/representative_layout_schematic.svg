@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560">
+  <defs>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2b6cb0" />
+    </marker>
+    <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#c05621" />
+    </marker>
+    <style>
+      .title { font: 700 24px 'Segoe UI', Arial, sans-serif; fill: #1a202c; }
+      .body { font: 16px 'Segoe UI', Arial, sans-serif; fill: #2d3748; }
+      .small { font: 14px 'Segoe UI', Arial, sans-serif; fill: #4a5568; }
+      .label { font: 700 14px 'Segoe UI', Arial, sans-serif; fill: #1a202c; }
+      .panel { fill: #f8fafc; stroke: #cbd5e0; stroke-width: 2; }
+      .arena { fill: #fffdf8; stroke: #4a5568; stroke-width: 2.5; }
+      .obstacle { fill: #fed7d7; stroke: #c53030; stroke-width: 2.5; }
+      .start { fill: #bee3f8; stroke: #2b6cb0; stroke-width: 2.5; }
+      .goal { fill: #fbd38d; stroke: #c05621; stroke-width: 2.5; }
+      .corridor { stroke: #a0aec0; stroke-width: 2; stroke-dasharray: 8 6; }
+      .trajL { fill: none; stroke: #2b6cb0; stroke-width: 3; stroke-dasharray: 10 8; marker-end: url(#arrowBlue); }
+      .trajR { fill: none; stroke: #c05621; stroke-width: 3; stroke-dasharray: 10 8; marker-end: url(#arrowOrange); }
+    </style>
+  </defs>
+
+  <text x="42" y="44" class="title">Representative 布局示意图</text>
+  <text x="42" y="72" class="body">固定双侧起点、中央双障碍与对侧任务槽位构成共享骨架，目标纵向顺序由 4 种离散置换决定。</text>
+
+  <rect x="36" y="96" width="658" height="424" rx="18" class="panel" />
+  <rect x="84" y="132" width="562" height="352" rx="8" class="arena" />
+
+  <text x="104" y="122" class="small">世界坐标 x ∈ [-4.5, 4.5]，起点与任务槽位分布在 x = ±3.7 附近</text>
+  <line x1="365" y1="132" x2="365" y2="484" class="corridor" />
+
+  <circle cx="365" cy="205" r="44" class="obstacle" />
+  <circle cx="365" cy="411" r="44" class="obstacle" />
+  <text x="320" y="210" class="label">上障碍</text>
+  <text x="320" y="416" class="label">下障碍</text>
+
+  <line x1="260" y1="308" x2="470" y2="308" class="corridor" />
+  <text x="288" y="297" class="small">狭窄协调通道</text>
+
+  <circle cx="132" cy="205" r="16" class="start" />
+  <circle cx="132" cy="411" r="16" class="start" />
+  <circle cx="598" cy="205" r="16" class="start" />
+  <circle cx="598" cy="411" r="16" class="start" />
+
+  <rect x="201" y="189" width="26" height="26" class="goal" />
+  <rect x="201" y="395" width="26" height="26" class="goal" />
+  <rect x="503" y="189" width="26" height="26" class="goal" />
+  <rect x="503" y="395" width="26" height="26" class="goal" />
+
+  <text x="106" y="182" class="label">L1</text>
+  <text x="106" y="438" class="label">L2</text>
+  <text x="580" y="182" class="label">R1</text>
+  <text x="580" y="438" class="label">R2</text>
+
+  <text x="177" y="182" class="label">左侧任务槽位</text>
+  <text x="479" y="182" class="label">右侧任务槽位</text>
+
+  <path d="M148 205 C 240 205, 295 280, 503 205" class="trajL" />
+  <path d="M148 411 C 240 411, 295 336, 503 411" class="trajL" />
+  <path d="M582 205 C 505 205, 455 336, 227 411" class="trajR" />
+  <path d="M582 411 C 500 411, 455 280, 227 205" class="trajR" />
+
+  <text x="84" y="510" class="small">蓝色圆点：左右两侧机器人起点</text>
+  <text x="300" y="510" class="small">橙色方块：对侧任务槽位</text>
+  <text x="514" y="510" class="small">虚线路径：代表性的会车 / 汇合冲突模式</text>
+
+  <rect x="726" y="96" width="216" height="424" rx="18" class="panel" />
+  <text x="748" y="132" class="label">离散变体</text>
+  <text x="748" y="162" class="body">seed mod 4 选择一种</text>
+  <text x="748" y="186" class="body">目标纵向顺序模式：</text>
+
+  <text x="748" y="232" class="label">模式 0</text>
+  <text x="748" y="254" class="small">直连配对</text>
+
+  <text x="748" y="300" class="label">模式 1</text>
+  <text x="748" y="322" class="small">纵向顺序反转</text>
+
+  <text x="748" y="368" class="label">模式 2</text>
+  <text x="748" y="390" class="small">纵向顺序循环移位</text>
+
+  <text x="748" y="436" class="label">模式 3</text>
+  <text x="748" y="458" class="small">外侧-内侧交替</text>
+
+  <text x="748" y="500" class="small">所有变体共享相同的</text>
+  <text x="748" y="520" class="small">起点、障碍物与中央通道骨架。</text>
+</svg>

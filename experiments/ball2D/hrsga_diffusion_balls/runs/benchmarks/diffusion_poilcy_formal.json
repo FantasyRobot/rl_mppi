@@ -1,0 +1,112 @@
+{
+  "model_type": "diffusion_poilcy",
+  "model_path": "d:/VirtualSpace/rl_mppi/experiments/ball2D/hrsga_diffusion_balls\\runs\\formal_diffusion_poilcy_4r8t\\checkpoints\\hrsga_diffusion_poilcy_best.pt",
+  "layout_mode": "representative",
+  "strict_collision_stop": true,
+  "num_tests": 20,
+  "seed_start": 5300,
+  "results": [
+    {
+      "setting": {
+        "name": "4r8t",
+        "num_balls": 4,
+        "num_tasks": 8
+      },
+      "summary": {
+        "model_type": "diffusion_poilcy",
+        "model_path": "d:/VirtualSpace/rl_mppi/experiments/ball2D/hrsga_diffusion_balls\\runs\\formal_diffusion_poilcy_4r8t\\checkpoints\\hrsga_diffusion_poilcy_best.pt",
+        "layout_mode": "representative",
+        "strict_collision_stop": true,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        },
+        "num_tests": 20,
+        "success_rate": 0.25,
+        "avg_completed_tasks": 2.5,
+        "avg_completed_fraction": 0.3125,
+        "avg_deadline_satisfaction": 0.3125,
+        "avg_collisions": 0.25,
+        "avg_mean_task_distance": 2.066013912673246,
+        "avg_min_pair_distance": 1.3210908812679603,
+        "avg_missed_deadlines": 3.5,
+        "avg_steps": 118.5,
+        "collision_stop_rate": 0.25,
+        "avg_inference_ms": 81.23162641865751,
+        "p95_inference_ms": 88.5681892496359,
+        "setting": "4r8t",
+        "num_balls": 4,
+        "num_tasks": 8
+      }
+    },
+    {
+      "setting": {
+        "name": "2r8t",
+        "num_balls": 2,
+        "num_tasks": 8
+      },
+      "summary": {
+        "model_type": "diffusion_poilcy",
+        "model_path": "d:/VirtualSpace/rl_mppi/experiments/ball2D/hrsga_diffusion_balls\\runs\\formal_diffusion_poilcy_4r8t\\checkpoints\\hrsga_diffusion_poilcy_best.pt",
+        "layout_mode": "representative",
+        "strict_collision_stop": true,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        },
+        "num_tests": 20,
+        "success_rate": 0.0,
+        "avg_completed_tasks": 1.5,
+        "avg_completed_fraction": 0.1875,
+        "avg_deadline_satisfaction": 0.09375,
+        "avg_collisions": 0.0,
+        "avg_mean_task_distance": 2.931927708639848,
+        "avg_min_pair_distance": 3.5480526359591673,
+        "avg_missed_deadlines": 6.5,
+        "avg_steps": 180.0,
+        "collision_stop_rate": 0.0,
+        "avg_inference_ms": 68.7999938333006,
+        "p95_inference_ms": 78.9392374993622,
+        "setting": "2r8t",
+        "num_balls": 2,
+        "num_tasks": 8
+      }
+    },
+    {
+      "setting": {
+        "name": "2r4t",
+        "num_balls": 2,
+        "num_tasks": 4
+      },
+      "summary": {
+        "model_type": "diffusion_poilcy",
+        "model_path": "d:/VirtualSpace/rl_mppi/experiments/ball2D/hrsga_diffusion_balls\\runs\\formal_diffusion_poilcy_4r8t\\checkpoints\\hrsga_diffusion_poilcy_best.pt",
+        "layout_mode": "representative",
+        "strict_collision_stop": true,
+        "task_rules": {
+          "visit_order_mode": "ranked",
+          "min_dwell_steps": 1,
+          "max_dwell_steps": 3
+        },
+        "num_tests": 20,
+        "success_rate": 0.0,
+        "avg_completed_tasks": 0.5,
+        "avg_completed_fraction": 0.125,
+        "avg_deadline_satisfaction": 0.125,
+        "avg_collisions": 0.25,
+        "avg_mean_task_distance": 3.103475237933779,
+        "avg_min_pair_distance": 2.803032413594239,
+        "avg_missed_deadlines": 2.5,
+        "avg_steps": 165.0,
+        "collision_stop_rate": 0.25,
+        "avg_inference_ms": 53.43131355550012,
+        "p95_inference_ms": 66.88299749945145,
+        "setting": "2r4t",
+        "num_balls": 2,
+        "num_tasks": 4
+      }
+    }
+  ]
+}
