@@ -1,0 +1,238 @@
+<mujoco model="t12a_14">
+  <compiler angle="radian"/>
+  <option integrator="implicitfast" />
+  <asset>
+    <mesh name="base_link" file="base_link.STL"/>
+    <mesh name="link1" file="link1.STL"/>
+    <mesh name="link2" file="link2.STL"/>
+    <mesh name="link3" file="link3.STL"/>
+    <mesh name="link4" file="link4.STL"/>
+    <mesh name="link5" file="link5.STL"/>
+    <mesh name="link6" file="link6.STL"/>
+    <texture type="skybox" builtin="gradient" rgb1="0.75 0.88 1.0" rgb2="0.55 0.75 1.0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
+      markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+  </asset>
+
+  <visual>
+    <quality shadowsize="8192"/>
+    <global azimuth="-175.697" elevation="-13.924"/>
+    <scale framelength=".3" framewidth=".03"/>
+  </visual>
+
+  <custom>
+    <numeric name="max_joint_speed" data="2.5"/>
+    <numeric name="robot1_init_joints" data="0 -0.35 0.6 0 1 0"/>
+    <numeric name="robot2_init_joints" data="0 -0.35 0.6 0 1 0"/>
+    <numeric name="robot3_init_joints" data="0 -0.35 0.6 0 1 0"/>
+    <numeric name="robot4_init_joints" data="0 -0.35 0.6 0 1 0"/>
+  </custom>
+
+  <statistic center="0 0 0.32" extent="5.2"/>
+
+  <worldbody>
+    <light pos="0 -0.1 0.5" dir="0 0.2 -1" diffuse="0.7 0.7 0.7" specular="0.3 0.3 0.3"
+        directional="true" castshadow="true"/>
+
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane" pos="0 0 0"/>
+
+    <!-- 机器人外扩到更大的圆环上，降低起始拥挤度 -->
+    <body name="robot1" pos="0 -1.45 0" euler="0 0 1.57079632679">
+      <geom type="mesh" rgba="1 1 1 1" mesh="base_link" pos="0 0 0.4295"/>
+      <body name="robot1_link1" gravcomp="1" pos="0 0 0">
+        <inertial pos="0.092112 0.0021983 0.35552" quat="0.134409 0.442125 -0.0186728 0.886629" mass="92.922" diaginertia="1.57878 1.5286 0.494967"/>
+        <joint name="robot1_joint1" pos="0 0 0" axis="0 0 1" range="-3 3"/>
+        <geom type="mesh" rgba="1 1 1 1" mesh="link1"/>
+        <body name="robot1_link2" gravcomp="1" pos="0.185 -0.112 0.4295">
+          <inertial pos="-0.027043 -0.033948 0.26711" quat="0.645767 -0.0195318 0.00388901 0.763275" mass="5.7331" diaginertia="0.212615 0.204505 0.0152921"/>
+          <joint name="robot1_joint2" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+          <geom type="mesh" rgba="0.86667 0.86667 0.8902 1" mesh="link2"/>
+          <body name="robot1_link3" gravcomp="1" pos="0 0.0295 0.6">
+            <inertial pos="0.1327 0.069142 0.13907" quat="0.935272 -0.00240232 0.353364 -0.0198737" mass="10.938" diaginertia="0.157983 0.149897 0.054206"/>
+            <joint name="robot1_joint3" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+            <geom type="mesh" rgba="0.66667 0.69804 0.76471 1" mesh="link3"/>
+            <body name="robot1_link4" gravcomp="1" pos="0.294 0.0825 0.2">
+              <inertial pos="0.16791 -0.00053942 0.038523" quat="-0.0232027 0.750647 -0.00795842 0.660248" mass="35.046" diaginertia="0.542056 0.501924 0.11944"/>
+              <joint name="robot1_joint4" pos="0 0 0" axis="1 0 0" range="-3 3"/>
+              <geom type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="link4"/>
+              <body name="robot1_link5" gravcomp="1" pos="0.356 0.0475 0">
+                <inertial pos="0.031715 -0.05859 -2.3356e-05" quat="0.31281 0.312467 0.634563 0.633911" mass="4.0172" diaginertia="0.0101287 0.0098724 0.00656016"/>
+                <joint name="robot1_joint5" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+                <geom type="mesh" rgba="0.69804 0.69804 0.69804 1" mesh="link5"/>
+                <body name="robot1_link6" gravcomp="1" pos="0.091998 -0.0475 0">
+                  <inertial pos="-0.010044 6.1766e-05 -8.6324e-05" quat="0.704486 0.709717 -0.000890303 0.000101045" mass="0.2048" diaginertia="0.00018236 9.58838e-05 9.57549e-05"/>
+                  <joint name="robot1_joint6" pos="0 0 0" axis="1 0 0" range="-3 3"/>
+                  <geom type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="link6"/>
+                  <site name="end_effector1" pos="0 0 0" type="sphere" size="0.01" rgba="0 0 1 1"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <body name="robot2" pos="1.45 0 0" euler="0 0 3.14159265359">
+      <geom type="mesh" rgba="1 1 1 1" mesh="base_link" pos="0 0 0.4295"/>
+      <body name="robot2_link1" gravcomp="1" pos="0 0 0">
+        <inertial pos="0.092112 0.0021983 0.35552" quat="0.134409 0.442125 -0.0186728 0.886629" mass="92.922" diaginertia="1.57878 1.5286 0.494967"/>
+        <joint name="robot2_joint1" pos="0 0 0" axis="0 0 1" range="-3 3"/>
+        <geom type="mesh" rgba="1 1 1 1" mesh="link1"/>
+        <body name="robot2_link2" gravcomp="1" pos="0.185 -0.112 0.4295">
+          <inertial pos="-0.027043 -0.033948 0.26711" quat="0.645767 -0.0195318 0.00388901 0.763275" mass="5.7331" diaginertia="0.212615 0.204505 0.0152921"/>
+          <joint name="robot2_joint2" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+          <geom type="mesh" rgba="0.86667 0.86667 0.8902 1" mesh="link2"/>
+          <body name="robot2_link3" gravcomp="1" pos="0 0.0295 0.6">
+            <inertial pos="0.1327 0.069142 0.13907" quat="0.935272 -0.00240232 0.353364 -0.0198737" mass="10.938" diaginertia="0.157983 0.149897 0.054206"/>
+            <joint name="robot2_joint3" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+            <geom type="mesh" rgba="0.66667 0.69804 0.76471 1" mesh="link3"/>
+            <body name="robot2_link4" gravcomp="1" pos="0.294 0.0825 0.2">
+              <inertial pos="0.16791 -0.00053942 0.038523" quat="-0.0232027 0.750647 -0.00795842 0.660248" mass="35.046" diaginertia="0.542056 0.501924 0.11944"/>
+              <joint name="robot2_joint4" pos="0 0 0" axis="1 0 0" range="-3 3"/>
+              <geom type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="link4"/>
+              <body name="robot2_link5" gravcomp="1" pos="0.356 0.0475 0">
+                <inertial pos="0.031715 -0.05859 -2.3356e-05" quat="0.31281 0.312467 0.634563 0.633911" mass="4.0172" diaginertia="0.0101287 0.0098724 0.00656016"/>
+                <joint name="robot2_joint5" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+                <geom type="mesh" rgba="0.69804 0.69804 0.69804 1" mesh="link5"/>
+                <body name="robot2_link6" gravcomp="1" pos="0.091998 -0.0475 0">
+                  <inertial pos="-0.010044 6.1766e-05 -8.6324e-05" quat="0.704486 0.709717 -0.000890303 0.000101045" mass="0.2048" diaginertia="0.00018236 9.58838e-05 9.57549e-05"/>
+                  <joint name="robot2_joint6" pos="0 0 0" axis="1 0 0" range="-3 3"/>
+                  <geom type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="link6"/>
+                  <site name="end_effector2" pos="0 0 0" type="sphere" size="0.01" rgba="0 0 1 1"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <body name="robot3" pos="0 1.45 0" euler="0 0 -1.57079632679">
+      <geom type="mesh" rgba="1 1 1 1" mesh="base_link" pos="0 0 0.4295"/>
+      <body name="robot3_link1" gravcomp="1" pos="0 0 0">
+        <inertial pos="0.092112 0.0021983 0.35552" quat="0.134409 0.442125 -0.0186728 0.886629" mass="92.922" diaginertia="1.57878 1.5286 0.494967"/>
+        <joint name="robot3_joint1" pos="0 0 0" axis="0 0 1" range="-3 3"/>
+        <geom type="mesh" rgba="1 1 1 1" mesh="link1"/>
+        <body name="robot3_link2" gravcomp="1" pos="0.185 -0.112 0.4295">
+          <inertial pos="-0.027043 -0.033948 0.26711" quat="0.645767 -0.0195318 0.00388901 0.763275" mass="5.7331" diaginertia="0.212615 0.204505 0.0152921"/>
+          <joint name="robot3_joint2" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+          <geom type="mesh" rgba="0.86667 0.86667 0.8902 1" mesh="link2"/>
+          <body name="robot3_link3" gravcomp="1" pos="0 0.0295 0.6">
+            <inertial pos="0.1327 0.069142 0.13907" quat="0.935272 -0.00240232 0.353364 -0.0198737" mass="10.938" diaginertia="0.157983 0.149897 0.054206"/>
+            <joint name="robot3_joint3" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+            <geom type="mesh" rgba="0.66667 0.69804 0.76471 1" mesh="link3"/>
+            <body name="robot3_link4" gravcomp="1" pos="0.294 0.0825 0.2">
+              <inertial pos="0.16791 -0.00053942 0.038523" quat="-0.0232027 0.750647 -0.00795842 0.660248" mass="35.046" diaginertia="0.542056 0.501924 0.11944"/>
+              <joint name="robot3_joint4" pos="0 0 0" axis="1 0 0" range="-3 3"/>
+              <geom type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="link4"/>
+              <body name="robot3_link5" gravcomp="1" pos="0.356 0.0475 0">
+                <inertial pos="0.031715 -0.05859 -2.3356e-05" quat="0.31281 0.312467 0.634563 0.633911" mass="4.0172" diaginertia="0.0101287 0.0098724 0.00656016"/>
+                <joint name="robot3_joint5" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+                <geom type="mesh" rgba="0.69804 0.69804 0.69804 1" mesh="link5"/>
+                <body name="robot3_link6" gravcomp="1" pos="0.091998 -0.0475 0">
+                  <inertial pos="-0.010044 6.1766e-05 -8.6324e-05" quat="0.704486 0.709717 -0.000890303 0.000101045" mass="0.2048" diaginertia="0.00018236 9.58838e-05 9.57549e-05"/>
+                  <joint name="robot3_joint6" pos="0 0 0" axis="1 0 0" range="-3 3"/>
+                  <geom type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="link6"/>
+                  <site name="end_effector3" pos="0 0 0" type="sphere" size="0.01" rgba="0 0 1 1"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <body name="robot4" pos="-1.45 0 0" euler="0 0 0">
+      <geom type="mesh" rgba="1 1 1 1" mesh="base_link" pos="0 0 0.4295"/>
+      <body name="robot4_link1" gravcomp="1" pos="0 0 0">
+        <inertial pos="0.092112 0.0021983 0.35552" quat="0.134409 0.442125 -0.0186728 0.886629" mass="92.922" diaginertia="1.57878 1.5286 0.494967"/>
+        <joint name="robot4_joint1" pos="0 0 0" axis="0 0 1" range="-3 3"/>
+        <geom type="mesh" rgba="1 1 1 1" mesh="link1"/>
+        <body name="robot4_link2" gravcomp="1" pos="0.185 -0.112 0.4295">
+          <inertial pos="-0.027043 -0.033948 0.26711" quat="0.645767 -0.0195318 0.00388901 0.763275" mass="5.7331" diaginertia="0.212615 0.204505 0.0152921"/>
+          <joint name="robot4_joint2" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+          <geom type="mesh" rgba="0.86667 0.86667 0.8902 1" mesh="link2"/>
+          <body name="robot4_link3" gravcomp="1" pos="0 0.0295 0.6">
+            <inertial pos="0.1327 0.069142 0.13907" quat="0.935272 -0.00240232 0.353364 -0.0198737" mass="10.938" diaginertia="0.157983 0.149897 0.054206"/>
+            <joint name="robot4_joint3" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+            <geom type="mesh" rgba="0.66667 0.69804 0.76471 1" mesh="link3"/>
+            <body name="robot4_link4" gravcomp="1" pos="0.294 0.0825 0.2">
+              <inertial pos="0.16791 -0.00053942 0.038523" quat="-0.0232027 0.750647 -0.00795842 0.660248" mass="35.046" diaginertia="0.542056 0.501924 0.11944"/>
+              <joint name="robot4_joint4" pos="0 0 0" axis="1 0 0" range="-3 3"/>
+              <geom type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="link4"/>
+              <body name="robot4_link5" gravcomp="1" pos="0.356 0.0475 0">
+                <inertial pos="0.031715 -0.05859 -2.3356e-05" quat="0.31281 0.312467 0.634563 0.633911" mass="4.0172" diaginertia="0.0101287 0.0098724 0.00656016"/>
+                <joint name="robot4_joint5" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+                <geom type="mesh" rgba="0.69804 0.69804 0.69804 1" mesh="link5"/>
+                <body name="robot4_link6" gravcomp="1" pos="0.091998 -0.0475 0">
+                  <inertial pos="-0.010044 6.1766e-05 -8.6324e-05" quat="0.704486 0.709717 -0.000890303 0.000101045" mass="0.2048" diaginertia="0.00018236 9.58838e-05 9.57549e-05"/>
+                  <joint name="robot4_joint6" pos="0 0 0" axis="1 0 0" range="-3 3"/>
+                  <geom type="mesh" rgba="0.64706 0.61961 0.58824 1" mesh="link6"/>
+                  <site name="end_effector4" pos="0 0 0" type="sphere" size="0.01" rgba="0 0 1 1"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <!-- 目标点扩到更大的环上，减少相邻目标的争抢和路径交叉 -->
+    <site name="goal1" pos="0.78 0.00 0.30" type="sphere" size="0.035" rgba="0 1 0 1"/>
+    <site name="goal2" pos="0.55 0.55 0.30" type="sphere" size="0.035" rgba="0 1 0 1"/>
+    <site name="goal3" pos="0.00 0.78 0.30" type="sphere" size="0.035" rgba="0 1 0 1"/>
+    <site name="goal4" pos="-0.55 0.55 0.30" type="sphere" size="0.035" rgba="0 1 0 1"/>
+    <site name="goal5" pos="-0.78 0.00 0.30" type="sphere" size="0.035" rgba="0 1 0 1"/>
+    <site name="goal6" pos="-0.55 -0.55 0.30" type="sphere" size="0.035" rgba="0 1 0 1"/>
+    <site name="goal7" pos="0.00 -0.78 0.30" type="sphere" size="0.035" rgba="0 1 0 1"/>
+    <site name="goal8" pos="0.55 -0.55 0.30" type="sphere" size="0.035" rgba="0 1 0 1"/>
+
+    <!-- 障碍移到外围通道，保留避障需求但释放中心区域 -->
+    <body name="obstacle1" pos="0.92 0.34 0.48">
+      <geom name="obstacle1" type="sphere" size="0.045" rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle2" pos="0.34 0.92 0.56">
+      <geom name="obstacle2" type="sphere" size="0.045" rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle3" pos="-0.92 0.34 0.44">
+      <geom name="obstacle3" type="sphere" size="0.045" rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle4" pos="-0.34 -0.92 0.56">
+      <geom name="obstacle4" type="sphere" size="0.045" rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+    <body name="obstacle5" pos="0.92 -0.34 0.52">
+      <geom name="obstacle5" type="sphere" size="0.045" rgba="1 0 0 1" conaffinity="1" contype="1"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <position name="robot1_motor_joint1" joint="robot1_joint1" kp="50000" kv="5000" ctrlrange="-3 3"/>
+    <position name="robot1_motor_joint2" joint="robot1_joint2" kp="120000" kv="10000" ctrlrange="-1.57 1.57"/>
+    <position name="robot1_motor_joint3" joint="robot1_joint3" kp="50000" kv="5000" ctrlrange="-1.57 1.57"/>
+    <position name="robot1_motor_joint4" joint="robot1_joint4" kp="2000" kv="200" ctrlrange="-3 3"/>
+    <position name="robot1_motor_joint5" joint="robot1_joint5" kp="2000" kv="200" ctrlrange="-1.57 1.57"/>
+    <position name="robot1_motor_joint6" joint="robot1_joint6" kp="2000" kv="200" ctrlrange="-3 3"/>
+
+    <position name="robot2_motor_joint1" joint="robot2_joint1" kp="50000" kv="5000" ctrlrange="-3 3"/>
+    <position name="robot2_motor_joint2" joint="robot2_joint2" kp="120000" kv="10000" ctrlrange="-1.57 1.57"/>
+    <position name="robot2_motor_joint3" joint="robot2_joint3" kp="50000" kv="5000" ctrlrange="-1.57 1.57"/>
+    <position name="robot2_motor_joint4" joint="robot2_joint4" kp="2000" kv="200" ctrlrange="-3 3"/>
+    <position name="robot2_motor_joint5" joint="robot2_joint5" kp="2000" kv="200" ctrlrange="-1.57 1.57"/>
+    <position name="robot2_motor_joint6" joint="robot2_joint6" kp="2000" kv="200" ctrlrange="-3 3"/>
+
+    <position name="robot3_motor_joint1" joint="robot3_joint1" kp="50000" kv="5000" ctrlrange="-3 3"/>
+    <position name="robot3_motor_joint2" joint="robot3_joint2" kp="120000" kv="10000" ctrlrange="-1.57 1.57"/>
+    <position name="robot3_motor_joint3" joint="robot3_joint3" kp="50000" kv="5000" ctrlrange="-1.57 1.57"/>
+    <position name="robot3_motor_joint4" joint="robot3_joint4" kp="2000" kv="200" ctrlrange="-3 3"/>
+    <position name="robot3_motor_joint5" joint="robot3_joint5" kp="2000" kv="200" ctrlrange="-1.57 1.57"/>
+    <position name="robot3_motor_joint6" joint="robot3_joint6" kp="2000" kv="200" ctrlrange="-3 3"/>
+
+    <position name="robot4_motor_joint1" joint="robot4_joint1" kp="50000" kv="5000" ctrlrange="-3 3"/>
+    <position name="robot4_motor_joint2" joint="robot4_joint2" kp="120000" kv="10000" ctrlrange="-1.57 1.57"/>
+    <position name="robot4_motor_joint3" joint="robot4_joint3" kp="50000" kv="5000" ctrlrange="-1.57 1.57"/>
+    <position name="robot4_motor_joint4" joint="robot4_joint4" kp="2000" kv="200" ctrlrange="-3 3"/>
+    <position name="robot4_motor_joint5" joint="robot4_joint5" kp="2000" kv="200" ctrlrange="-1.57 1.57"/>
+    <position name="robot4_motor_joint6" joint="robot4_joint6" kp="2000" kv="200" ctrlrange="-3 3"/>
+  </actuator>
+</mujoco>

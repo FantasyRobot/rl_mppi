@@ -1,0 +1,50 @@
+{
+  "config": {
+    "epochs": 120,
+    "batch_size": 64,
+    "learning_rate": 0.0003,
+    "weight_decay": 1e-05,
+    "train_episodes": 320,
+    "val_episodes": 64,
+    "rollout_episodes": 16,
+    "eval_interval": 5,
+    "save_interval": 10,
+    "max_steps": 280,
+    "hidden_dim": 128,
+    "edge_hidden_dim": 64,
+    "dataset_layout_pattern": "structured,structured,random,representative",
+    "expert_max_collisions": 0,
+    "eval_layout_mode": "representative",
+    "eval_strict_collision_stop": true,
+    "resume_path": null,
+    "seed": 4300,
+    "run_name": "standard_gnn_formal",
+    "output_root": "D:\\VirtualSpace\\rl_mppi\\experiments\\multi_robots\\hrsga\\runs",
+    "xml_path": "d:\\VirtualSpace\\rl_mppi\\experiments\\multi_robots\\urdf\\multi_robots_sparse.xml"
+  },
+  "dataset": {
+    "train_samples": 89600,
+    "val_samples": 17920,
+    "expert_episode_count": 384,
+    "expert_stats": "completed=0.15 deadline_satisfaction=0.003 collisions=0.00",
+    "expert_completed_fraction": 0.018880208333333332,
+    "expert_deadline_satisfaction": 0.0026041666666666665,
+    "expert_collisions": 0.0,
+    "dataset_filter": "filter=max_collisions<=0 requested=384 attempted=384 kept=384 dropped=0",
+    "requested_episode_count": 384,
+    "attempted_episode_count": 384,
+    "dropped_episode_count": 0,
+    "expert_max_collisions": 0,
+    "dropped_expert_stats": "no episodes",
+    "warnings": [
+      "low expert completion fraction (0.019); imitation targets may be too weak for this XML scene",
+      "low expert deadline satisfaction (0.003); rollout evaluation is unlikely to improve from pure behavior cloning"
+    ]
+  },
+  "policy_target": "joint_targets_from_xml_layout",
+  "task_rules": {
+    "enforce_visit_order": true,
+    "min_dwell_steps": 1,
+    "max_dwell_steps": 3
+  }
+}

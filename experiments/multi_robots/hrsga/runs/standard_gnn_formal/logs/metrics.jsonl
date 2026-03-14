@@ -1,0 +1,5 @@
+{"epoch": 1, "train_loss": 0.005846811989717285, "val_loss": 0.00041264763301244653}
+{"epoch": 2, "train_loss": 0.00037622541425142634, "val_loss": 0.00034592044441004484}
+{"epoch": 3, "train_loss": 0.00027796531160545, "val_loss": 0.00019961814180078364}
+{"epoch": 4, "train_loss": 0.00021007262455636269, "val_loss": 0.00019058884655091137}
+{"epoch": 5, "train_loss": 0.00019080450371153089, "val_loss": 0.00014870484358360566, "eval": {"success_rate": 0.0, "avg_completed_fraction": 0.03125, "avg_deadline_satisfaction": 0.0, "avg_collisions": 0.0, "avg_mean_task_distance": 0.6399818410505508, "avg_min_pair_distance": 0.8994832353143807, "avg_missed_deadlines": 7.75, "avg_steps": 280.0, "collision_stop_rate": 0.0}, "selection_score": 0.0}
