@@ -168,6 +168,24 @@ Key args:
 - `--sac_model`: SAC checkpoint used by SAC and RL‑MPPI
 - `--save_npz`: output file
 
+### Script: [benchmark_t12a_14_methods.py](benchmark_t12a_14_methods.py)
+
+Runs multiple trials with shared initial conditions and compares MPPI / SAC / RL‑MPPI on:
+- planning time per control step
+- goal tracking error (`final_dist`, `mean_dist`, `rms_dist`)
+- joint impact indicators (`max_abs_qacc`, `rms_qacc`, `max_abs_qjerk`, `rms_qjerk`)
+
+**Output format:**
+- The console summary table displays metrics as `Mean ± Std` (e.g., `Plan(ms): 21.45 ± 3.12`).
+- `Std` represents the standard deviation across all trials (inter-trial variability).
+- If `num_trials=1`, the standard deviation will be `0.00`.
+
+Key args:
+- `--num_trials --steps --action_repeat --tol --seed`
+- `--start_margin` or `--init_qpos` for start state control
+- MPPI knobs: `--horizon --num_samples --lambda_coeff --noise_std --pos_cost --action_cost --smooth_cost`
+- Outputs: `--save_npz --save_json --save_csv`
+
 ### Plot the saved `.npz`
 
 Script: [plot_t12a_14_compare_npz.py](plot_t12a_14_compare_npz.py)
